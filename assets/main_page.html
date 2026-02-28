@@ -187,15 +187,15 @@
   /* ── Entry grid ── */
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
-    gap: 0.4rem;
-    padding: 1rem 2rem 2rem;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 0.55rem;
+    padding: 1.25rem 2rem 2rem;
   }
   .entry {
     display: flex;
     align-items: center;
-    gap: 0.6rem;
-    padding: 0.5rem 0.75rem;
+    gap: 0.75rem;
+    padding: 0.6rem 1rem;
     border-radius: 6px;
     border: 1px solid transparent;
     transition: border-color 0.12s, opacity 0.12s;
@@ -211,6 +211,18 @@
     background: var(--missing-bg);
     border-color: var(--missing-border);
   }
+
+  /* ── Creature sprite ── */
+  .entry-sprite {
+    width: 44px;
+    height: 44px;
+    object-fit: contain;
+    image-rendering: pixelated;   /* crisp pixel-art sprites */
+    flex-shrink: 0;
+    border-radius: 4px;
+  }
+  /* When image fails to load, collapse to zero width so layout doesn't break */
+  .entry-sprite.missing-img { width: 0; height: 0; }
 
   /* ── Entry pieces ── */
   .entry-num {
@@ -278,6 +290,7 @@
     .grid  { padding: 0.75rem 0.75rem 2rem; grid-template-columns: 1fr; }
     .stats { padding: 0.5rem 1rem; flex-wrap: wrap; gap: 0.75rem; }
     .legend { display: none; }
+    .entry-sprite { width: 36px; height: 36px; }
   }
 </style>
 </head>
@@ -387,6 +400,8 @@ function render() {
 
     html +=
       '<div class="entry ' + cls + '">' +
+        '<img class="entry-sprite" src="/assets/creatures/' + entry.num + '.png" alt=""' +
+          ' onerror="this.classList.add(\'missing-img\')">' +
         '<span class="entry-num">#' + entry.num + '</span>' +
         '<span class="entry-name"><a href="' + entry.wiki + '" target="_blank" rel="noopener">' +
           escapeHtml(entry.name) +
