@@ -34,7 +34,7 @@
     position: fixed;
     inset: 0;
     z-index: -1;
-    background-image: url('/assets/background.jpg');
+    background-image: url('assets/background.jpg');
     background-size: cover;
     background-position: center;
     filter: blur(6px) brightness(0.6);
@@ -419,7 +419,7 @@ function render() {
 
     html +=
       '<div class="entry ' + cls + '">' +
-        '<img class="entry-sprite" src="/assets/creatures/' + entry.num + '.png" alt=""' +
+        '<img class="entry-sprite" src="assets/creatures/' + entry.num + '.png" alt=""' +
           ' onerror="this.classList.add(\'missing-img\')">' +
         '<span class="entry-num">#' + entry.num + '</span>' +
         '<span class="entry-name"><a href="' + entry.wiki + '" target="_blank" rel="noopener">' +
