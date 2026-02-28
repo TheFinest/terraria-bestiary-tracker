@@ -791,7 +791,7 @@ def build_bestiary_json(worlds):
             "hm": hardmode,
         })
 
-    return {"worlds": world_data, "entries": entries, "total": len(BESTIARY)}
+    return {"worlds": world_data, "entries": entries, "total": len(BESTIARY), "internalToEntry": internal_to_entry}
 
 with open("assets/main_page.html") as file:
     HTML_TEMPLATE = file.read();
@@ -868,5 +868,20 @@ def main():
         server.server_close()
 
 
+def build_static(out_path="index.html"):
+    """Generate a static index.html suitable for GitHub Pages hosting."""
+    data = build_bestiary_json({})  # no pre-loaded worlds
+    data_json = json.dumps(data, separators=(',', ':'))
+    with open("assets/main_page.html", encoding="utf-8") as f:
+        template = f.read()
+    static_html = template.replace("__DATA_PLACEHOLDER__", data_json)
+    with open(out_path, "w", encoding="utf-8") as f:
+        f.write(static_html)
+    print(f"Generated {out_path}")
+
+
 if __name__ == "__main__":
-    main()
+    if "--build" in sys.argv:
+        build_static()
+    else:
+        main()

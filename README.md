@@ -6,4 +6,11 @@
 
 A simple tool to help you figure out exactly what creatures you're missing.
 
+# Usage
+This project only relies on simple html and built-in python libraries, so, no need to download anything (so long as you have python)!
+
+All you need to is run `python terraria_bestiary_tracker.py` and it'll scan your world files and host the website locally at `http://localhost:8275`
+ 
+Once it's up and running, you should see a webpage similar to below:
+## Showcase
 ![Main UI](docs/showcase.png)

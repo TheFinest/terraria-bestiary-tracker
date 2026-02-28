@@ -118,6 +118,19 @@
     color: var(--text);
   }
 
+  /* ── Upload button ── */
+  .upload-btn {
+    cursor: pointer;
+    padding: 0.35rem 0.9rem;
+    border-radius: 6px;
+    border: 1px solid #4a7a3a;
+    background: #2a4a2a;
+    color: #96e878;
+    font-size: 0.85rem;
+    white-space: nowrap;
+  }
+  .upload-btn:hover { background: #3a5e3a; }
+
   /* ── Legend ── */
   .legend {
     display: flex;
@@ -302,6 +315,10 @@
     <select id="worldSelect">
       <option value="">--- Select a World ---</option>
     </select>
+    <label class="upload-btn" title="Load a .wld file">
+      Upload world file
+      <input type="file" id="upload-input" accept=".wld" style="display:none">
+    </label>
     <input type="text" id="search" placeholder="Search entries...">
     <div class="filter-btns">
       <button id="btnAll" class="active" onclick="setFilter('all')">All</button>
@@ -325,7 +342,7 @@
 </div>
 
 <div id="content">
-  <div class="no-world">Select a world above to see your bestiary progress.</div>
+  <div class="no-world" id="noWorldMsg">Select or upload a world file to see your bestiary progress.</div>
 </div>
 
 <script>
@@ -339,17 +356,19 @@ const statsBar     = document.getElementById('statsBar');
 let currentFilter = 'all';
 let currentWorld  = null;
 
+function addWorldOption(key) {
+  const w = DATA.worlds[key];
+  const opt = document.createElement('option');
+  opt.value = key;
+  opt.textContent = w.name + ' [' + w.source + ']  (' + w.encountered.length + '/' + DATA.total + ')';
+  worldSelect.appendChild(opt);
+}
+
 // Populate world selector, sorted by most progress first
 const worldKeys = Object.keys(DATA.worlds).sort((a, b) =>
   DATA.worlds[b].encountered.length - DATA.worlds[a].encountered.length
 );
-worldKeys.forEach(fname => {
-  const w = DATA.worlds[fname];
-  const opt = document.createElement('option');
-  opt.value = fname;
-  opt.textContent = w.name + ' [' + w.source + ']  (' + w.encountered.length + '/' + DATA.total + ')';
-  worldSelect.appendChild(opt);
-});
+worldKeys.forEach(addWorldOption);
 
 worldSelect.addEventListener('change', () => {
   currentWorld = worldSelect.value ? DATA.worlds[worldSelect.value] : null;
@@ -366,7 +385,7 @@ function setFilter(f) {
 
 function render() {
   if (!currentWorld) {
-    content.innerHTML = '<div class="no-world">Select a world above to see your bestiary progress.</div>';
+    content.innerHTML = '<div class="no-world">Select or upload a world file to see your bestiary progress.</div>';
     statsBar.style.display = 'none';
     return;
   }
@@ -423,6 +442,113 @@ function escapeHtml(s) {
   d.textContent = s;
   return d.innerHTML;
 }
+
+// ── Client-side .wld parser ──
+function parseWorldBestiary(buffer) {
+  const bytes = new Uint8Array(buffer);
+  let pos = 0;
+
+  function readInt32() {
+    const v = (bytes[pos] | (bytes[pos+1]<<8) | (bytes[pos+2]<<16) | (bytes[pos+3]<<24)) >>> 0;
+    pos += 4; return v;
+  }
+  function readInt16() {
+    const v = bytes[pos] | (bytes[pos+1]<<8);
+    pos += 2; return v;
+  }
+  function skip(n) { pos += n; }
+  function readString() {
+    let length = 0, shift = 0;
+    for (;;) {
+      const b = bytes[pos++];
+      length |= (b & 0x7F) << shift;
+      if (b < 0x80) break;
+      shift += 7;
+    }
+    const s = new TextDecoder().decode(bytes.subarray(pos, pos + length));
+    pos += length;
+    return s;
+  }
+
+  const version = readInt32();
+  if (version < 194) return null;
+
+  skip(7);  // magic bytes
+  skip(1);  // file_type
+  skip(4);  // revision (uint32)
+  skip(8);  // favorites (uint64)
+
+  const numSections = readInt16();
+  const sections = [];
+  for (let i = 0; i < numSections; i++) sections.push(readInt32());
+
+  const numTileTypes = readInt16();
+  skip(numTileTypes);
+
+  // World name is in the header section
+  pos = sections[0];
+  const worldName = readString();
+
+  if (numSections <= 8) {
+    return { name: worldName, kills: {}, sights: [], chats: [] };
+  }
+
+  // Bestiary data is in section 8
+  pos = sections[8];
+
+  const killCount = readInt32();
+  const kills = {};
+  for (let i = 0; i < killCount; i++) {
+    const name = readString();
+    kills[name] = readInt32();
+  }
+
+  const sightCount = readInt32();
+  const sights = [];
+  for (let i = 0; i < sightCount; i++) sights.push(readString());
+
+  const chatCount = readInt32();
+  const chats = [];
+  for (let i = 0; i < chatCount; i++) chats.push(readString());
+
+  return { name: worldName, kills, sights, chats };
+}
+
+document.getElementById('upload-input').addEventListener('change', async e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  e.target.value = ''; // allow re-uploading the same file
+
+  let result;
+  try {
+    result = parseWorldBestiary(await file.arrayBuffer());
+  } catch (err) {
+    alert('Failed to read file: ' + err.message);
+    return;
+  }
+  if (!result) { alert('World file is too old or unsupported (version < 194).'); return; }
+
+  const allInternal = [...Object.keys(result.kills), ...result.sights, ...result.chats];
+  const encounterSet = new Set();
+  for (const iname of allInternal) {
+    const num = DATA.internalToEntry[iname];
+    if (num !== undefined) encounterSet.add(num);
+  }
+
+  const key = 'Uploaded|' + result.name;
+  DATA.worlds[key] = {
+    name: result.name,
+    source: 'Uploaded',
+    encountered: [...encounterSet].sort((a, b) => a - b),
+    kill_count: Object.keys(result.kills).length,
+    sight_count: result.sights.length,
+    chat_count: result.chats.length,
+  };
+  addWorldOption(key);
+  worldSelect.value = key;
+  currentWorld = DATA.worlds[key];
+  render();
+});
 </script>
 </body>
 </html>
