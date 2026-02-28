@@ -358,10 +358,19 @@ let currentWorld  = null;
 
 function addWorldOption(key) {
   const w = DATA.worlds[key];
-  const opt = document.createElement('option');
-  opt.value = key;
-  opt.textContent = w.name + ' [' + w.source + ']  (' + w.encountered.length + '/' + DATA.total + ')';
-  worldSelect.appendChild(opt);
+  const text = w.name + ' [' + w.source + ']  (' + w.encountered.length + '/' + DATA.total + ')';
+  let opt = null;
+  for (const o of worldSelect.options) {
+    if (o.value === key) { opt = o; break; }
+  }
+  if (opt) {
+    opt.textContent = text; // update existing entry
+  } else {
+    opt = document.createElement('option');
+    opt.value = key;
+    opt.textContent = text;
+    worldSelect.appendChild(opt);
+  }
 }
 
 // Populate world selector, sorted by most progress first
