@@ -455,29 +455,39 @@ function escapeHtml(s) {
 // ── Client-side .wld parser ──
 function parseWorldBestiary(buffer) {
   const bytes = new Uint8Array(buffer);
+  const end = bytes.length;
   let pos = 0;
 
   function readInt32() {
+    if (pos + 4 > end) throw new Error('Unexpected end of file');
     const v = (bytes[pos] | (bytes[pos+1]<<8) | (bytes[pos+2]<<16) | (bytes[pos+3]<<24)) >>> 0;
     pos += 4; return v;
   }
   function readInt16() {
+    if (pos + 2 > end) throw new Error('Unexpected end of file');
     const v = bytes[pos] | (bytes[pos+1]<<8);
     pos += 2; return v;
   }
-  function skip(n) { pos += n; }
+  function skip(n) {
+    if (pos + n > end) throw new Error('Unexpected end of file');
+    pos += n;
+  }
   function readString() {
+    // LEB128 length prefix — max 5 bytes for a 32-bit value
     let length = 0, shift = 0;
-    for (;;) {
+    for (let i = 0; i < 5; i++) {
+      if (pos >= end) throw new Error('Unexpected end of file');
       const b = bytes[pos++];
       length |= (b & 0x7F) << shift;
       if (b < 0x80) break;
       shift += 7;
     }
+    if (pos + length > end) throw new Error('Unexpected end of file');
     const s = new TextDecoder().decode(bytes.subarray(pos, pos + length));
     pos += length;
     return s;
   }
+  const MAX_ENTRIES = 10000; // sanity cap — Terraria has ~700 NPC types
 
   const version = readInt32();
   if (version < 194) return null;
@@ -506,6 +516,7 @@ function parseWorldBestiary(buffer) {
   pos = sections[8];
 
   const killCount = readInt32();
+  if (killCount > MAX_ENTRIES) throw new Error('Invalid world file');
   const kills = {};
   for (let i = 0; i < killCount; i++) {
     const name = readString();
@@ -513,10 +524,12 @@ function parseWorldBestiary(buffer) {
   }
 
   const sightCount = readInt32();
+  if (sightCount > MAX_ENTRIES) throw new Error('Invalid world file');
   const sights = [];
   for (let i = 0; i < sightCount; i++) sights.push(readString());
 
   const chatCount = readInt32();
+  if (chatCount > MAX_ENTRIES) throw new Error('Invalid world file');
   const chats = [];
   for (let i = 0; i < chatCount; i++) chats.push(readString());
 

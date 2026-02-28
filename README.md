@@ -6,7 +6,7 @@
 </div>
 
 # Usage
-All you need to is run `python terraria_bestiary_tracker.py` and it'll scan your world files and host the website locally at `http://localhost:8275`.
+All you need to do to run it is `python terraria_bestiary_tracker.py` and it'll scan your world files and host the website locally at `http://localhost:8275`.
 You don't need to install any python packages - this runs entirely off bult-in modules. It's meant to be very lightweight.
  
 Once it's up and running, you should see a webpage similar to below:
