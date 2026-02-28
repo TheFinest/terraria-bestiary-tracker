@@ -59,560 +59,587 @@ def _find_world_dirs():
 
     return dirs
 
-# ── Complete bestiary entries (number, display_name, wiki_slug, internal_names) ──
-# internal_names is a list of internal NPC identifiers used in world save files.
+# ── Complete bestiary entries ──
+# (number, display_name, wiki_slug, internal_names, hardmode)
+# hardmode: False = pre-hardmode / not applicable, True = hardmode-only
 # Wiki URLs are constructed as: https://terraria.wiki.gg/wiki/{wiki_slug}
 BESTIARY = [
-    (1, "Guide", "Guide", ["Guide"]),
-    (2, "Merchant", "Merchant", ["Merchant"]),
-    (3, "Nurse", "Nurse", ["Nurse"]),
-    (4, "Demolitionist", "Demolitionist", ["Demolitionist"]),
-    (5, "Angler", "Angler", ["Angler"]),
-    (6, "Dryad", "Dryad", ["Dryad"]),
-    (7, "Arms Dealer", "Arms_Dealer", ["ArmsDealer"]),
-    (8, "Dye Trader", "Dye_Trader", ["DyeTrader"]),
-    (9, "Painter", "Painter", ["Painter"]),
-    (10, "Stylist", "Stylist", ["Stylist"]),
-    (11, "Zoologist", "Zoologist", ["Zoologist"]),
-    (12, "Tavernkeep", "Tavernkeep", ["DD2Bartender", "Tavernkeep"]),
-    (13, "Golfer", "Golfer", ["Golfer"]),
-    (14, "Goblin Tinkerer", "Goblin_Tinkerer", ["GoblinTinkerer", "BoundGoblin"]),
-    (15, "Witch Doctor", "Witch_Doctor", ["WitchDoctor"]),
-    (16, "Mechanic", "Mechanic", ["Mechanic", "BoundMechanic"]),
-    (17, "Clothier", "Clothier", ["Clothier"]),
-    (18, "Wizard", "Wizard", ["Wizard", "BoundWizard"]),
-    (19, "Steampunker", "Steampunker", ["Steampunker"]),
-    (20, "Pirate", "Pirate_(NPC)", ["Pirate"]),
-    (21, "Truffle", "Truffle", ["Truffle"]),
-    (22, "Tax Collector", "Tax_Collector", ["TaxCollector"]),
-    (23, "Cyborg", "Cyborg", ["Cyborg"]),
-    (24, "Party Girl", "Party_Girl", ["PartyGirl"]),
-    (25, "Princess", "Princess", ["Princess"]),
-    (26, "Santa Claus", "Santa_Claus", ["SantaClaus"]),
-    (27, "Town Cat", "Town_Cat", ["TownCat"]),
-    (28, "Town Dog", "Town_Dog", ["TownDog"]),
-    (29, "Town Bunny", "Town_Bunny", ["TownBunny"]),
-    (30, "Nerdy Slime", "Town_Slimes", ["TownSlimeBlue"]),
-    (31, "Cool Slime", "Town_Slimes", ["TownSlimeGreen"]),
-    (32, "Elder Slime", "Town_Slimes", ["TownSlimeOld"]),
-    (33, "Clumsy Slime", "Town_Slimes", ["TownSlimePurple"]),
-    (34, "Diva Slime", "Town_Slimes", ["TownSlimeRainbow"]),
-    (35, "Surly Slime", "Town_Slimes", ["TownSlimeRed"]),
-    (36, "Mystic Slime", "Town_Slimes", ["TownSlimeYellow"]),
-    (37, "Squire Slime", "Town_Slimes", ["TownSlimeCopper"]),
-    (38, "Traveling Merchant", "Traveling_Merchant", ["TravellingMerchant"]),
-    (39, "Skeleton Merchant", "Skeleton_Merchant", ["SkeletonMerchant"]),
-    (40, "Old Man", "Old_Man", ["OldMan"]),
-    (41, "Mystic Frog", "Mystic_Frog", ["MysticFrog"]),
-    (42, "Bunny", "Bunny", ["Bunny"]),
-    (43, "Bunny (With a Hat)", "Bunny", ["PartyBunny"]),
-    (44, "Explosive Bunny", "Explosive_Bunny", ["ExplosiveBunny"]),
-    (45, "Bunny (Slime)", "Bunny", ["BunnySlimed"]),
-    (46, "Bunny (Xmas)", "Bunny", ["BunnyXmas"]),
-    (47, "Gold Bunny", "Gold_Bunny", ["GoldBunny"]),
-    (48, "Bird", "Bird", ["Bird"]),
-    (49, "Blue Jay", "Blue_Jay", ["BirdBlue"]),
-    (50, "Cardinal", "Cardinal_(critter)", ["BirdRed"]),
-    (51, "Scarlet Macaw", "Scarlet_Macaw", ["ScarletMacaw"]),
-    (52, "Blue Macaw", "Blue_Macaw", ["BlueMacaw"]),
-    (53, "Toucan", "Toucan", ["Toucan"]),
-    (54, "Yellow Cockatiel", "Yellow_Cockatiel", ["YellowCockatiel"]),
-    (55, "Gray Cockatiel", "Gray_Cockatiel", ["GrayCockatiel"]),
-    (56, "Gold Bird", "Gold_Bird", ["GoldBird"]),
-    (57, "Goldfish", "Goldfish_(NPC)", ["Goldfish"]),
-    (58, "Gold Goldfish", "Gold_Goldfish", ["GoldGoldfish"]),
-    (59, "Squirrel", "Squirrel", ["Squirrel"]),
-    (60, "Red Squirrel", "Squirrel", ["SquirrelRed"]),
-    (61, "Gold Squirrel", "Gold_Squirrel", ["GoldSquirrel"]),
-    (62, "Mouse", "Mouse", ["Mouse"]),
-    (63, "Gold Mouse", "Gold_Mouse", ["GoldMouse"]),
-    (64, "Frog", "Frog", ["Frog"]),
-    (65, "Gold Frog", "Gold_Frog", ["GoldFrog"]),
-    (66, "Grasshopper", "Grasshopper", ["Grasshopper"]),
-    (67, "Gold Grasshopper", "Gold_Grasshopper", ["GoldGrasshopper"]),
-    (68, "Butterfly", "Butterfly", ["Butterfly"]),
-    (69, "Gold Butterfly", "Gold_Butterfly", ["GoldButterfly"]),
-    (70, "Worm", "Worm_(critter)", ["Worm"]),
-    (71, "Gold Worm", "Gold_Worm", ["GoldWorm"]),
-    (72, "Dragonfly", "Dragonfly", ["Dragonfly", "BlackDragonfly", "BlueDragonfly", "GreenDragonfly", "OrangeDragonfly", "RedDragonfly", "YellowDragonfly"]),
-    (73, "Gold Dragonfly", "Gold_Dragonfly", ["GoldDragonfly"]),
-    (74, "Seahorse", "Seahorse", ["Seahorse"]),
-    (75, "Gold Seahorse", "Gold_Seahorse", ["GoldSeahorse"]),
-    (76, "Water Strider", "Water_Strider", ["WaterStrider"]),
-    (77, "Gold Water Strider", "Gold_Water_Strider", ["GoldWaterStrider"]),
-    (78, "Ladybug", "Ladybug", ["Ladybug"]),
-    (79, "Gold Ladybug", "Gold_Ladybug", ["GoldLadybug"]),
-    (80, "Stinkbug", "Stinkbug", ["Stinkbug"]),
-    (81, "Faeling", "Faeling", ["Faeling"]),
-    (82, "Mallard Duck", "Duck", ["Duck2", "DuckWhite"]),
-    (83, "Duck", "Duck", ["Duck"]),
-    (84, "Turtle", "Turtle_(critter)", ["Turtle"]),
-    (85, "Owl", "Owl", ["Owl"]),
-    (86, "Firefly", "Firefly", ["Firefly"]),
-    (87, "Enchanted Nightcrawler", "Enchanted_Nightcrawler", ["EnchantedNightcrawler"]),
-    (88, "Pink Fairy", "Fairy", ["FairyCritterPink"]),
-    (89, "Green Fairy", "Fairy", ["FairyCritterGreen"]),
-    (90, "Blue Fairy", "Fairy", ["FairyCritterBlue"]),
-    (91, "Rat", "Rat", ["Rat"]),
-    (92, "Maggot", "Maggot", ["Maggot"]),
-    (93, "Amethyst Squirrel", "Gem_Squirrel", ["GemSquirrelAmethyst"]),
-    (94, "Topaz Squirrel", "Gem_Squirrel", ["GemSquirrelTopaz"]),
-    (95, "Sapphire Squirrel", "Gem_Squirrel", ["GemSquirrelSapphire"]),
-    (96, "Emerald Squirrel", "Gem_Squirrel", ["GemSquirrelEmerald"]),
-    (97, "Ruby Squirrel", "Gem_Squirrel", ["GemSquirrelRuby"]),
-    (98, "Diamond Squirrel", "Gem_Squirrel", ["GemSquirrelDiamond"]),
-    (99, "Amber Squirrel", "Gem_Squirrel", ["GemSquirrelAmber"]),
-    (100, "Amethyst Bunny", "Gem_Bunny", ["GemBunnyAmethyst"]),
-    (101, "Topaz Bunny", "Gem_Bunny", ["GemBunnyTopaz"]),
-    (102, "Sapphire Bunny", "Gem_Bunny", ["GemBunnySapphire"]),
-    (103, "Emerald Bunny", "Gem_Bunny", ["GemBunnyEmerald"]),
-    (104, "Ruby Bunny", "Gem_Bunny", ["GemBunnyRuby"]),
-    (105, "Diamond Bunny", "Gem_Bunny", ["GemBunnyDiamond"]),
-    (106, "Amber Bunny", "Gem_Bunny", ["GemBunnyAmber"]),
-    (107, "Snail", "Snail", ["Snail"]),
-    (108, "Truffle Worm", "Truffle_Worm", ["TruffleWorm"]),
-    (109, "Penguin", "Penguin", ["Penguin"]),
-    (110, "Penguin (Black)", "Penguin", ["PenguinBlack"]),
-    (111, "Scorpion", "Scorpion_(critter)", ["Scorpion"]),
-    (112, "Black Scorpion", "Scorpion_(critter)", ["ScorpionBlack"]),
-    (113, "Grebe", "Grebe", ["Grebe"]),
-    (114, "Pupfish", "Pupfish", ["Pupfish"]),
-    (115, "Seagull", "Seagull", ["Seagull"]),
-    (116, "Sea Turtle", "Sea_Turtle", ["SeaTurtle"]),
-    (117, "Pufferfish", "Pufferfish_(critter)", ["Pufferfish"]),
-    (118, "Dolphin", "Dolphin", ["Dolphin"]),
-    (119, "Jungle Turtle", "Jungle_Turtle", ["JungleTurtle"]),
-    (120, "Grubby", "Grubby", ["Grubby"]),
-    (121, "Sluggy", "Sluggy", ["Sluggy"]),
-    (122, "Buggy", "Buggy", ["Buggy"]),
-    (123, "Hell Butterfly", "Hell_Butterfly", ["HellButterfly"]),
-    (124, "Lavafly", "Lavafly", ["Lavafly"]),
-    (125, "Magma Snail", "Magma_Snail", ["MagmaSnail"]),
-    (126, "Lightning Bug", "Lightning_Bug", ["LightningBug"]),
-    (127, "Prismatic Lacewing", "Prismatic_Lacewing", ["EmpressButterfly"]),
-    (128, "Glowing Snail", "Glowing_Snail", ["GlowingSnail"]),
-    (129, "Gnome", "Gnome", ["Gnome"]),
-    (130, "Goblin Scout", "Goblin_Scout", ["GoblinScout"]),
-    (131, "Green Slime", "Green_Slime", ["GreenSlime"]),
-    (132, "Blue Slime", "Blue_Slime", ["BlueSlime"]),
-    (133, "Purple Slime", "Purple_Slime", ["PurpleSlime"]),
-    (134, "Pinky", "Pinky", ["Pinky"]),
-    (135, "Windy Balloon", "Windy_Balloon", ["WindyBalloon"]),
-    (136, "Angry Dandelion", "Angry_Dandelion", ["AngryDandelion"]),
-    (137, "Umbrella Slime", "Umbrella_Slime", ["UmbrellaSlime"]),
-    (138, "Flying Fish", "Flying_Fish", ["FlyingFish"]),
-    (139, "Angry Nimbus", "Angry_Nimbus", ["AngryNimbus"]),
-    (140, "Demon Eye (Dilated)", "Demon_Eye", ["DialatedEye"]),
-    (141, "Demon Eye (Sleepy)", "Demon_Eye", ["SleepyEye"]),
-    (142, "Demon Eye (Purple)", "Demon_Eye", ["PurpleEye"]),
-    (143, "Demon Eye", "Demon_Eye", ["DemonEye"]),
-    (144, "Demon Eye (Green)", "Demon_Eye", ["GreenEye"]),
-    (145, "Demon Eye (Cataract)", "Demon_Eye", ["CataractEye"]),
-    (146, "Wandering Eye", "Wandering_Eye", ["WanderingEye"]),
-    (147, "Zombie (Female)", "Zombie", ["FemaleZombie"]),
-    (148, "Zombie (Slimed)", "Zombie", ["SlimedZombie"]),
-    (149, "Zombie (Bald)", "Zombie", ["BaldZombie", "BigBaldZombie"]),
-    (150, "Zombie", "Zombie", ["Zombie"]),
-    (151, "Zombie (Twiggy)", "Zombie", ["TwiggyZombie"]),
-    (152, "Zombie (Torch)", "Zombie", ["TorchZombie"]),
-    (153, "Zombie (Swamp)", "Zombie", ["SwampZombie"]),
-    (154, "Zombie (Pincushion)", "Zombie", ["PincushionZombie"]),
-    (155, "Raincoat Zombie", "Raincoat_Zombie", ["RaincoatZombie"]),
-    (156, "Possessed Armor", "Possessed_Armor", ["PossessedArmor"]),
-    (157, "Werewolf", "Werewolf", ["Werewolf"]),
-    (158, "Wraith", "Wraith", ["Wraith"]),
-    (159, "Corrupt Bunny", "Corrupt_Bunny", ["CorruptBunny"]),
-    (160, "Corrupt Penguin", "Corrupt_Penguin", ["CorruptPenguin"]),
-    (161, "Vicious Bunny", "Vicious_Bunny", ["CrimsonBunny"]),
-    (162, "Vicious Penguin", "Vicious_Penguin", ["CrimsonPenguin"]),
-    (163, "Blood Zombie", "Blood_Zombie", ["BloodZombie"]),
-    (164, "The Groom", "The_Groom", ["TheGroom"]),
-    (165, "The Bride", "The_Bride", ["TheBride"]),
-    (166, "Zombie Merman", "Zombie_Merman", ["ZombieMerman"]),
-    (167, "Clown", "Clown", ["Clown"]),
-    (168, "Blood Squid", "Blood_Squid", ["BloodSquid"]),
-    (169, "Blood Eel", "Blood_Eel", ["BloodEelHead"]),
-    (170, "Corrupt Goldfish", "Corrupt_Goldfish", ["CorruptGoldfish", "CrimsonGoldfish"]),
-    (171, "Vicious Goldfish", "Vicious_Goldfish", ["CrimsonGoldfish"]),
-    (172, "Drippler", "Drippler", ["Drippler"]),
-    (173, "Chattering Teeth Bomb", "Chattering_Teeth_Bomb", ["ChatteringTeethBomb"]),
-    (174, "Wandering Eye Fish", "Wandering_Eye_Fish", ["EyeballFlyingFish"]),
-    (175, "Hemogoblin Shark", "Hemogoblin_Shark", ["GoblinShark"]),
-    (176, "Dreadnautilus", "Dreadnautilus", ["BloodNautilus"]),
-    (177, "Hoppin' Jack", "Hoppin%27_Jack", ["HoppinJack"]),
-    (178, "Maggot Zombie", "Maggot_Zombie", ["MaggotZombie"]),
-    (179, "Moss Zombie", "Zombie", ["MossZombie"]),
-    (180, "Raven", "Raven", ["Raven"]),
-    (181, "Ghost", "Ghost", ["Ghost"]),
-    (182, "Statue", "Statues", ["ArmedZombie", "ArmedZombiePincushion", "ArmedZombieTwiggy", "ArmedZombieSwamp", "ArmedZombieCenx"]),
-    (183, "Red Slime", "Red_Slime", ["RedSlime"]),
-    (184, "Yellow Slime", "Yellow_Slime", ["YellowSlime"]),
-    (185, "Toxic Sludge", "Toxic_Sludge", ["ToxicSludge"]),
-    (186, "Giant Worm", "Giant_Worm", ["GiantWormHead"]),
-    (187, "Digger", "Digger", ["DiggerHead"]),
-    (188, "Baby Slime", "Baby_Slime", ["BabySlime"]),
-    (189, "Black Slime", "Black_Slime", ["BlackSlime"]),
-    (190, "Shimmer Slime", "Shimmer_Slime", ["ShimmerSlime"]),
-    (191, "Mother Slime", "Mother_Slime", ["MotherSlime"]),
-    (192, "Cochineal Beetle", "Cochineal_Beetle", ["CochinealBeetle"]),
-    (193, "Skeleton (Misassembled)", "Skeleton", ["MisassembledSkeleton", "SmallMisassembledSkeleton", "BigMisassembledSkeleton"]),
-    (194, "Skeleton", "Skeleton", ["Skeleton", "SmallSkeleton", "BigSkeleton"]),
-    (195, "Salamander", "Salamander", ["Salamander", "Salamander2", "Salamander3", "Salamander4", "Salamander5", "Salamander6", "Salamander7", "Salamander8", "Salamander9"]),
-    (196, "Skeleton (Headache)", "Skeleton", ["HeadacheSkeleton", "SmallHeadacheSkeleton", "BigHeadacheSkeleton"]),
-    (197, "Skeleton (Pantless)", "Skeleton", ["PantlessSkeleton", "SmallPantlessSkeleton", "BigPantlessSkeleton"]),
-    (198, "Crawdad", "Crawdad", ["Crawdad", "Crawdad2"]),
-    (199, "Undead Miner", "Undead_Miner", ["UndeadMiner"]),
-    (200, "Skeleton Archer", "Skeleton_Archer", ["SkeletonArcher"]),
-    (201, "Nymph", "Nymph", ["Nymph"]),
-    (202, "Armored Skeleton", "Armored_Skeleton", ["ArmoredSkeleton"]),
-    (203, "Rock Golem", "Rock_Golem", ["RockGolem"]),
-    (204, "Tim", "Tim", ["Tim"]),
-    (205, "Rune Wizard", "Rune_Wizard", ["RuneWizard"]),
-    (206, "Cave Bat", "Cave_Bat", ["CaveBat"]),
-    (207, "Giant Bat", "Giant_Bat", ["GiantBat"]),
-    (208, "Blue Jellyfish", "Blue_Jellyfish", ["BlueJellyfish"]),
-    (209, "Green Jellyfish", "Green_Jellyfish", ["GreenJellyfish"]),
-    (210, "Mimic", "Mimic", ["Mimic"]),
-    (211, "Giant Shelly", "Giant_Shelly", ["GiantShelly", "GiantShelly2"]),
-    (212, "Lost Girl", "Lost_Girl", ["LostGirl"]),
-    (213, "Granite Golem", "Granite_Golem", ["GraniteGolem"]),
-    (214, "Granite Elemental", "Granite_Elemental", ["GraniteFlyer"]),
-    (215, "Hoplite", "Hoplite", ["GreekSkeleton"]),
-    (216, "Medusa", "Medusa", ["Medusa"]),
-    (217, "Spore Skeleton", "Spore_Skeleton", ["SporeSkeleton"]),
-    (218, "Spore Bat", "Spore_Bat", ["SporeBat"]),
-    (219, "Wall Creeper", "Wall_Creeper", ["WallCreeper", "WallCreeperWall"]),
-    (220, "Black Recluse", "Black_Recluse", ["BlackRecluse", "BlackRecluseWall"]),
-    (221, "Ice Slime", "Ice_Slime", ["IceSlime"]),
-    (222, "Frozen Zombie", "Frozen_Zombie", ["FrozenZombie"]),
-    (223, "Ice Golem", "Ice_Golem", ["IceGolem"]),
-    (224, "Wolf", "Wolf", ["Wolf"]),
-    (225, "Spiked Ice Slime", "Spiked_Ice_Slime", ["SpikedIceSlime"]),
-    (226, "Cyan Beetle", "Cyan_Beetle", ["CyanBeetle"]),
-    (227, "Undead Viking", "Undead_Viking", ["UndeadViking"]),
-    (228, "Snow Flinx", "Snow_Flinx", ["SnowFlinx"]),
-    (229, "Armored Viking", "Armored_Viking", ["ArmoredViking"]),
-    (230, "Icy Merman", "Icy_Merman", ["IcyMerman"]),
-    (231, "Ice Bat", "Ice_Bat", ["IceBat"]),
-    (232, "Ice Elemental", "Ice_Elemental", ["IceElemental"]),
-    (233, "Ice Mimic", "Ice_Mimic", ["IceMimic"]),
-    (234, "Ice Tortoise", "Ice_Tortoise", ["IceTortoise"]),
-    (235, "Vulture", "Vulture", ["Vulture"]),
-    (236, "Sand Slime", "Sand_Slime", ["SandSlime"]),
-    (237, "Antlion Larva", "Antlion_Larva", ["LarvaeAntlion"]),
-    (238, "Giant Antlion Charger", "Antlion_Charger", ["WalkingAntlion"]),
-    (239, "Mummy", "Mummy", ["Mummy"]),
-    (240, "Ghoul", "Ghoul", ["DesertGhoul", "DesertGhoulCorruption", "DesertGhoulCrimson", "DesertGhoulHallow"]),
-    (241, "Basilisk", "Basilisk", ["DesertBeast"]),
-    (242, "Tomb Crawler", "Tomb_Crawler", ["TombCrawlerHead"]),
-    (243, "Antlion", "Antlion", ["Antlion"]),
-    (244, "Sand Poacher", "Sand_Poacher", ["DesertScorpionWalk", "DesertScorpionWall"]),
-    (245, "Giant Antlion Swarmer", "Antlion_Swarmer", ["FlyingAntlion", "GiantFlyingAntlion"]),
-    (246, "Antlion Charger", "Antlion_Charger", ["WalkingAntlion"]),
-    (247, "Dune Splicer", "Dune_Splicer", ["DuneSplicerHead"]),
-    (248, "Angry Tumbler", "Angry_Tumbler", ["AngryTumbler"]),
-    (249, "Antlion Swarmer", "Antlion_Swarmer", ["FlyingAntlion"]),
-    (250, "Sand Elemental", "Sand_Elemental", ["SandElemental"]),
-    (251, "Sand Shark", "Sand_Shark", ["SandShark", "SandsharkCorrupt", "SandsharkCrimson", "SandsharkHallow"]),
-    (252, "Crab", "Crab", ["Crab"]),
-    (253, "Sea Snail", "Sea_Snail", ["SeaSnail"]),
-    (254, "Shark", "Shark", ["Shark"]),
-    (255, "Orca", "Orca", ["Orca"]),
-    (256, "Squid", "Squid", ["Squid"]),
-    (257, "Pink Jellyfish", "Pink_Jellyfish", ["PinkJellyfish"]),
-    (258, "Jungle Slime", "Jungle_Slime", ["JungleSlime"]),
-    (259, "Snatcher", "Snatcher", ["Snatcher"]),
-    (260, "Giant Flying Fox", "Giant_Flying_Fox", ["GiantFlyingFox"]),
-    (261, "Derpling", "Derpling", ["Derpling"]),
-    (262, "Spiked Jungle Slime", "Spiked_Jungle_Slime", ["SpikedJungleSlime"]),
-    (263, "Lac Beetle", "Lac_Beetle", ["LacBeetle"]),
-    (264, "Doctor Bones", "Doctor_Bones", ["DoctorBones"]),
-    (265, "Bee", "Bee", ["Bee"]),
-    (266, "Bee (Larger)", "Bee", ["BeeSmall"]),
-    (267, "Hornet (Stingy)", "Hornet", ["HornetStingy"]),
-    (268, "Hornet (Spikey)", "Hornet", ["HornetSpikey"]),
-    (269, "Hornet", "Hornet", ["Hornet"]),
-    (270, "Hornet (Fatty)", "Hornet", ["HornetFatty"]),
-    (271, "Hornet (Honey)", "Hornet", ["HornetHoney"]),
-    (272, "Hornet (Leafy)", "Hornet", ["HornetLeafy"]),
-    (273, "Moss Hornet", "Moss_Hornet", ["MossHornet"]),
-    (274, "Moth", "Moth", ["Moth"]),
-    (275, "Man Eater", "Man_Eater", ["ManEater"]),
-    (276, "Angry Trapper", "Angry_Trapper", ["AngryTrapper"]),
-    (277, "Jungle Bat", "Jungle_Bat", ["JungleBat"]),
-    (278, "Piranha", "Piranha", ["Piranha"]),
-    (279, "Angler Fish", "Angler_Fish", ["AnglerFish"]),
-    (280, "Arapaima", "Arapaima", ["Arapaima"]),
-    (281, "Giant Tortoise", "Giant_Tortoise", ["GiantTortoise"]),
-    (282, "Jungle Creeper", "Jungle_Creeper", ["JungleCreeper", "JungleCreeperWall"]),
-    (283, "Meteor Head", "Meteor_Head", ["MeteorHead"]),
-    (284, "Dungeon Slime", "Dungeon_Slime", ["DungeonSlime"]),
-    (285, "Angry Bones", "Angry_Bones", ["AngryBones"]),
-    (286, "Angry Bones (Big)", "Angry_Bones", ["AngryBonesBig"]),
-    (287, "Angry Bones (Big Muscle)", "Angry_Bones", ["AngryBonesBigMuscle"]),
-    (288, "Angry Bones (Big Helmet)", "Angry_Bones", ["AngryBonesBigHelmet"]),
-    (289, "Blue Armored Bones (Mace)", "Blue_Armored_Bones", ["BlueArmoredBones"]),
-    (290, "Skeleton Sniper", "Skeleton_Sniper", ["SkeletonSniper"]),
-    (291, "Tactical Skeleton", "Tactical_Skeleton", ["TacticalSkeleton"]),
-    (292, "Skeleton Commando", "Skeleton_Commando", ["SkeletonCommando"]),
-    (293, "Hell Armored Bones", "Hell_Armored_Bones", ["HellArmoredBones"]),
-    (294, "Rusty Armored Bones (Sword No Armor)", "Rusty_Armored_Bones", ["RustyArmoredBonesAxe"]),
-    (295, "Rusty Armored Bones (Flail)", "Rusty_Armored_Bones", ["RustyArmoredBonesFlail"]),
-    (296, "Hell Armored Bones (Mace)", "Hell_Armored_Bones", ["HellArmoredBonesMace"]),
-    (297, "Blue Armored Bones", "Blue_Armored_Bones", ["BlueArmoredBonesMace"]),
-    (298, "Rusty Armored Bones (Sword)", "Rusty_Armored_Bones", ["RustyArmoredBonesSword"]),
-    (299, "Hell Armored Bones (Spike Shield)", "Hell_Armored_Bones", ["HellArmoredBonesSpikeShield"]),
-    (300, "Blue Armored Bones (No Pants)", "Blue_Armored_Bones", ["BlueArmoredBonesNoPants"]),
-    (301, "Hell Armored Bones (Sword)", "Hell_Armored_Bones", ["HellArmoredBonesSword"]),
-    (302, "Rusty Armored Bones (Axe)", "Rusty_Armored_Bones", ["RustyArmoredBonesAxe"]),
-    (303, "Blue Armored Bones (Sword)", "Blue_Armored_Bones", ["BlueArmoredBonesSword"]),
-    (304, "Bone Lee", "Bone_Lee", ["BoneLee"]),
-    (305, "Paladin", "Paladin", ["Paladin"]),
-    (306, "Dark Caster", "Dark_Caster", ["DarkCaster"]),
-    (307, "Librarian Skeleton", "Angry_Bones", ["LibrarianSkeleton"]),
-    (308, "Diabolist (Red)", "Diabolist", ["DiabolistRed"]),
-    (309, "Diabolist (White)", "Diabolist", ["DiabolistWhite"]),
-    (310, "Necromancer", "Necromancer", ["Necromancer"]),
-    (311, "Ragged Caster", "Ragged_Caster", ["RaggedCaster"]),
-    (312, "Necromancer (Armored)", "Necromancer", ["NecromancerArmored"]),
-    (313, "Ragged Caster (Open Coat)", "Ragged_Caster", ["RaggedCasterOpenCoat"]),
-    (314, "Water Bolt Mimic", "Dungeon_Slime", ["WaterBoltMimic"]),
-    (315, "Cursed Skull", "Cursed_Skull", ["CursedSkull"]),
-    (316, "Giant Cursed Skull", "Giant_Cursed_Skull", ["GiantCursedSkull"]),
-    (317, "Dungeon Guardian", "Dungeon_Guardian", ["DungeonGuardian"]),
-    (318, "Dungeon Spirit", "Dungeon_Spirit", ["DungeonSpirit"]),
-    (319, "Lava Slime", "Lava_Slime", ["LavaSlime"]),
-    (320, "Tortured Soul", "Tortured_Soul", ["TorturedSoul"]),
-    (321, "Bone Serpent", "Bone_Serpent", ["BoneSerpentHead"]),
-    (322, "Fire Imp", "Fire_Imp", ["FireImp"]),
-    (323, "Hellbat", "Hellbat", ["Hellbat"]),
-    (324, "Demon", "Demon", ["Demon"]),
-    (325, "Voodoo Demon", "Voodoo_Demon", ["VoodooDemon"]),
-    (326, "Lava Bat", "Lava_Bat", ["Lavabat"]),
-    (327, "Red Devil", "Red_Devil", ["RedDevil"]),
-    (328, "Wyvern", "Wyvern", ["WyvernHead"]),
-    (329, "Harpy", "Harpy", ["Harpy"]),
-    (330, "Martian Probe", "Martian_Probe", ["MartianProbe"]),
-    (331, "Slimeling", "Slimeling", ["Slimeling"]),
-    (332, "Corrupt Slime", "Corrupt_Slime", ["CorruptSlime"]),
-    (333, "Eater of Souls", "Eater_of_Souls", ["EaterofSouls"]),
-    (334, "Corruptor", "Corruptor", ["Corruptor"]),
-    (335, "Devourer", "Devourer", ["DevourerHead"]),
-    (336, "World Feeder", "World_Feeder", ["SeekerHead"]),
-    (337, "Clinger", "Clinger", ["Clinger"]),
-    (338, "Slimer", "Slimer", ["Slimer", "Slimer2"]),
-    (339, "Cursed Hammer", "Cursed_Hammer", ["CursedHammer"]),
-    (340, "Corrupt Mimic", "Corrupt_Mimic", ["BigMimicCorruption"]),
-    (341, "Pigron (Corrupt)", "Pigron", ["PigronCorruption"]),
-    (342, "Bone Biter", "Bone_Biter", ["DesertDjinn"]),
-    (343, "Dark Mummy", "Dark_Mummy", ["DarkMummy"]),
-    (344, "Vile Ghoul", "Ghoul", ["DesertGhoulCorruption"]),
-    (345, "Crimslime", "Crimslime", ["Crimslime"]),
-    (346, "Face Monster", "Face_Monster", ["FaceMonster"]),
-    (347, "Crimera", "Crimera", ["Crimera"]),
-    (348, "Blood Feeder", "Blood_Feeder", ["BloodFeeder"]),
-    (349, "Blood Jelly", "Blood_Jelly", ["BloodJelly"]),
-    (350, "Floaty Gross", "Floaty_Gross", ["FloatyGross"]),
-    (351, "Ichor Sticker", "Ichor_Sticker", ["IchorSticker"]),
-    (352, "Crimson Axe", "Crimson_Axe", ["CrimsonAxe"]),
-    (353, "Blood Crawler", "Blood_Crawler", ["BloodCrawler", "BloodCrawlerWall"]),
-    (354, "Herpling", "Herpling", ["Herpling"]),
-    (355, "Crimson Mimic", "Crimson_Mimic", ["BigMimicCrimson"]),
-    (356, "Pigron (Crimson)", "Pigron", ["PigronCrimson"]),
-    (357, "Flesh Reaver", "Flesh_Reaver", ["DesertDjinn"]),
-    (358, "Blood Mummy", "Blood_Mummy", ["BloodMummy"]),
-    (359, "Tainted Ghoul", "Ghoul", ["DesertGhoulCrimson"]),
-    (360, "Lamia", "Lamia", ["DesertLamiaDark"]),
-    (361, "Desert Spirit", "Desert_Spirit", ["DesertDjinn"]),
-    (362, "Rainbow Slime", "Rainbow_Slime", ["RainbowSlime", "GoldenSlime"]),
-    (363, "Pixie", "Pixie", ["Pixie"]),
-    (364, "Gastropod", "Gastropod", ["Gastropod"]),
-    (365, "Unicorn", "Unicorn", ["Unicorn"]),
-    (366, "Illuminant Slime", "Illuminant_Slime", ["IlluminantSlime"]),
-    (367, "Chaos Elemental", "Chaos_Elemental", ["ChaosElemental"]),
-    (368, "Illuminant Bat", "Illuminant_Bat", ["IlluminantBat"]),
-    (369, "Enchanted Sword", "Enchanted_Sword_(NPC)", ["EnchantedSword"]),
-    (370, "Hallowed Mimic", "Hallowed_Mimic", ["BigMimicHallow", "BigMimicJungle"]),
-    (371, "Pigron", "Pigron", ["PigronHallow"]),
-    (372, "Crystal Thresher", "Crystal_Thresher", ["DesertBeast"]),
-    (373, "Light Mummy", "Light_Mummy", ["LightMummy"]),
-    (374, "Dreamer Ghoul", "Ghoul", ["DesertGhoulHallow"]),
-    (375, "Lamia (Light)", "Lamia", ["DesertLamiaLight"]),
-    (376, "Spore Zombie (Mushroom)", "Spore_Zombie", ["ZombieMushroomHat"]),
-    (377, "Spore Zombie (Hat Mushroom)", "Spore_Zombie", ["ZombieMushroom"]),
-    (378, "Anomura Fungus", "Anomura_Fungus", ["AnomuraFungus"]),
-    (379, "Mushi Ladybug", "Mushi_Ladybug", ["MushiLadybug"]),
-    (380, "Fungi Bulb", "Fungi_Bulb", ["FungiBulb"]),
-    (381, "Giant Fungi Bulb", "Giant_Fungi_Bulb", ["GiantFungiBulb"]),
-    (382, "Fungo Fish", "Fungo_Fish", ["FungoFish"]),
-    (383, "Lihzahrd", "Lihzahrd", ["Lihzahrd", "LihzahrdCrawler"]),
-    (384, "Flying Snake", "Flying_Snake", ["FlyingSnake"]),
-    (385, "Goblin Peon", "Goblin_Peon", ["GoblinPeon"]),
-    (386, "Goblin Thief", "Goblin_Thief", ["GoblinThief"]),
-    (387, "Goblin Archer", "Goblin_Archer", ["GoblinArcher"]),
-    (388, "Goblin Warrior", "Goblin_Warrior", ["GoblinWarrior"]),
-    (389, "Goblin Warlock", "Goblin_Summoner", ["GoblinSummoner"]),
-    (390, "Goblin Sorcerer", "Goblin_Sorcerer", ["GoblinSorcerer"]),
-    (391, "Shadowflame Apparition", "Shadowflame_Apparition", ["ShadowFlameApparition"]),
-    (392, "Old One's Skeleton", "Old_One%27s_Skeleton", ["DD2SkeletonT1"]),
-    (393, "Etherian Goblin", "Etherian_Goblin", ["DD2GoblinT1"]),
-    (394, "Etherian Goblin Bomber", "Etherian_Goblin_Bomber", ["DD2GoblinBomberT1"]),
-    (395, "Kobold", "Kobold", ["DD2KoboldWalkerT2"]),
-    (396, "Etherian Javelin Thrower", "Etherian_Javelin_Thrower", ["DD2JavelinstT1"]),
-    (397, "Wither Beast", "Wither_Beast", ["DD2WitherBeastT2"]),
-    (398, "Drakin", "Drakin", ["DD2DrakinT2"]),
-    (399, "Ogre", "Ogre", ["DD2OgreT2"]),
-    (400, "Kobold Glider", "Kobold_Glider", ["DD2KoboldFlyerT2"]),
-    (401, "Etherian Wyvern", "Etherian_Wyvern", ["DD2WyvernT1"]),
-    (402, "Dark Mage", "Dark_Mage", ["DD2DarkMageT1"]),
-    (403, "Betsy", "Betsy", ["DD2Betsy"]),
-    (404, "Etherian Lightning Bug", "Etherian_Lightning_Bug", ["DD2LightningBugT3"]),
-    (405, "Pirate Deadeye", "Pirate_Deadeye", ["PirateDeadeye"]),
-    (406, "Pirate Deckhand", "Pirate_Deckhand", ["PirateDeckhand"]),
-    (407, "Pirate Crossbower", "Pirate_Crossbower", ["PirateCrossbower"]),
-    (408, "Pirate Corsair", "Pirate_Corsair", ["PirateCorsair"]),
-    (409, "Pirate Captain", "Pirate_Captain", ["PirateCaptain"]),
-    (410, "Parrot", "Parrot", ["Parrot"]),
-    (411, "Flying Dutchman", "Flying_Dutchman", ["FlyingDutchman"]),
-    (412, "Brain Scrambler", "Brain_Scrambler", ["BrainScrambler"]),
-    (413, "Ray Gunner", "Ray_Gunner", ["RayGunner"]),
-    (414, "Martian Engineer", "Martian_Engineer", ["MartianEngineer"]),
-    (415, "Martian Officer", "Martian_Officer", ["MartianOfficer"]),
-    (416, "Gigazapper", "Gigazapper", ["Gigazapper"]),
-    (417, "Scutlix", "Scutlix", ["Scutlix"]),
-    (418, "Gray Grunt", "Gray_Grunt", ["GrayGrunt"]),
-    (419, "Martian Walker", "Martian_Walker", ["MartianWalker"]),
-    (420, "Tesla Turret", "Tesla_Turret", ["MartianTurret"]),
-    (421, "Martian Drone", "Martian_Drone", ["MartianDrone"]),
-    (422, "Scutlix Gunner", "Scutlix_Gunner", ["ScutlixRider"]),
-    (423, "Martian Saucer", "Martian_Saucer", ["MartianSaucer", "MartianSaucerCore"]),
-    (424, "Fritz", "Fritz", ["Fritz"]),
-    (425, "Frankenstein", "Frankenstein", ["Frankenstein"]),
-    (426, "Creature from the Deep", "Creature_from_the_Deep", ["CreatureFromTheDeep"]),
-    (427, "Swamp Thing", "Swamp_Thing", ["SwampThing"]),
-    (428, "Dr. Man Fly", "Dr._Man_Fly", ["DrManFly"]),
-    (429, "The Possessed", "The_Possessed", ["ThePossessed"]),
-    (430, "Psycho", "Psycho", ["Psycho"]),
-    (431, "Butcher", "Butcher", ["Butcher"]),
-    (432, "Vampire", "Vampire", ["Vampire"]),
-    (433, "Eyezor", "Eyezor", ["Eyezor"]),
-    (434, "Nailhead", "Nailhead", ["Nailhead"]),
-    (435, "Reaper", "Reaper", ["Reaper"]),
-    (436, "Deadly Sphere", "Deadly_Sphere", ["DeadlySphere"]),
-    (437, "Mothron", "Mothron", ["Mothron"]),
-    (438, "Baby Mothron", "Mothron", ["MothronEgg", "MothronSpawn"]),
-    (439, "Scarecrow (Cloth Face Stick)", "Scarecrow", ["Scarecrow1"]),
-    (440, "Scarecrow (Cloth Face)", "Scarecrow", ["Scarecrow2"]),
-    (441, "Scarecrow (Guy Fawkes Stick)", "Scarecrow", ["Scarecrow3"]),
-    (442, "Scarecrow (Guy Fawkes)", "Scarecrow", ["Scarecrow4"]),
-    (443, "Scarecrow (Cloth Hat Stick)", "Scarecrow", ["Scarecrow5"]),
-    (444, "Scarecrow (Cloth Hat)", "Scarecrow", ["Scarecrow6"]),
-    (445, "Scarecrow (Pumpkin Hat Stick)", "Scarecrow", ["Scarecrow7"]),
-    (446, "Scarecrow (Pumpkin Hat)", "Scarecrow", ["Scarecrow8"]),
-    (447, "Scarecrow (Pumpkin Head Stick)", "Scarecrow", ["Scarecrow9"]),
-    (448, "Scarecrow (Pumpkin Head)", "Scarecrow", ["Scarecrow10"]),
-    (449, "Splinterling", "Splinterling", ["Splinterling"]),
-    (450, "Poltergeist", "Poltergeist", ["Poltergeist"]),
-    (451, "Hellhound", "Hellhound", ["Hellhound"]),
-    (452, "Headless Horseman", "Headless_Horseman", ["HeadlessHorseman"]),
-    (453, "Mourning Wood", "Mourning_Wood", ["MourningWood"]),
-    (454, "Pumpking", "Pumpking", ["Pumpking"]),
-    (455, "Zombie Elf (Girl)", "Zombie_Elf", ["ZombieElfGirl"]),
-    (456, "Zombie Elf", "Zombie_Elf", ["ZombieElf"]),
-    (457, "Zombie Elf (Beard)", "Zombie_Elf", ["ZombieElfBeard"]),
-    (458, "Gingerbread Man", "Gingerbread_Man", ["GingerbreadMan"]),
-    (459, "Elf Archer", "Elf_Archer", ["ElfArcher"]),
-    (460, "Nutcracker", "Nutcracker", ["Nutcracker"]),
-    (461, "Krampus", "Krampus", ["Krampus"]),
-    (462, "Yeti", "Yeti", ["Yeti"]),
-    (463, "Present Mimic", "Present_Mimic", ["PresentMimic"]),
-    (464, "Everscream", "Everscream", ["Everscream"]),
-    (465, "Ice Queen", "Ice_Queen", ["IceQueen"]),
-    (466, "Santa-NK1", "Santa-NK1", ["SantaNK1"]),
-    (467, "Flocko", "Flocko", ["Flocko"]),
-    (468, "Elf Copter", "Elf_Copter", ["ElfCopter"]),
-    # ── Bosses ──
-    (469, "King Slime", "King_Slime", ["KingSlime"]),
-    (470, "Spiked Slime", "King_Slime", ["SlimeSpiked"]),
-    (471, "Eye of Cthulhu", "Eye_of_Cthulhu", ["EyeofCthulhu"]),
-    (472, "Servant of Cthulhu", "Servant_of_Cthulhu", ["ServantofCthulhu"]),
-    (473, "Eater of Worlds (Head)", "Eater_of_Worlds", ["EaterofWorldsHead"]),
-    (474, "Eater of Worlds (Body)", "Eater_of_Worlds", ["EaterofWorldsBody"]),
-    (475, "Eater of Worlds (Tail)", "Eater_of_Worlds", ["EaterofWorldsTail"]),
-    (476, "Brain of Cthulhu", "Brain_of_Cthulhu", ["BrainofCthulhu"]),
-    (477, "Creeper", "Creeper_(enemy)", ["Creeper"]),
-    (478, "Queen Bee", "Queen_Bee", ["QueenBee"]),
-    (479, "Skeletron", "Skeletron", ["SkeletronHead"]),
-    (480, "Skeletron Hand", "Skeletron", ["SkeletronHand"]),
-    (481, "Deerclops", "Deerclops", ["Deerclops"]),
-    (482, "Wall of Flesh", "Wall_of_Flesh", ["WallofFlesh", "WallofFleshEye"]),
-    (483, "The Hungry", "The_Hungry", ["TheHungry"]),
-    (484, "The Hungry II", "The_Hungry_II", ["TheHungryII"]),
-    (485, "Leech", "Leech", ["LeechHead"]),
-    (486, "Queen Slime", "Queen_Slime", ["QueenSlimeBoss"]),
-    (487, "Crystal Slime", "Queen_Slime", ["QueenSlimeMinionBlue"]),
-    (488, "Heavenly Slime", "Queen_Slime", ["QueenSlimeMinionPink"]),
-    (489, "Bouncy Slime", "Queen_Slime", ["QueenSlimeMinionPurple"]),
-    (490, "Retinazer", "Retinazer", ["Retinazer"]),
-    (491, "Spazmatism", "Spazmatism", ["Spazmatism"]),
-    (492, "The Destroyer", "The_Destroyer", ["TheDestroyer", "TheDestroyerBody", "TheDestroyerTail"]),
-    (493, "Probe", "Probe", ["Probe"]),
-    (494, "Skeletron Prime", "Skeletron_Prime", ["SkeletronPrime"]),
-    (495, "Prime Cannon", "Skeletron_Prime", ["PrimeCannon"]),
-    (496, "Prime Saw", "Skeletron_Prime", ["PrimeSaw"]),
-    (497, "Prime Vice", "Skeletron_Prime", ["PrimeVice"]),
-    (498, "Prime Laser", "Skeletron_Prime", ["PrimeLaser"]),
-    (499, "Plantera", "Plantera", ["Plantera"]),
-    (500, "Plantera's Tentacle", "Plantera", ["PlanterasTentacle"]),
-    (501, "Plantera's Hook", "Plantera", ["PlanterasHook"]),
-    (502, "Spore", "Plantera", ["Spore"]),
-    (503, "Empress of Light", "Empress_of_Light", ["HallowBoss"]),
-    (504, "Golem", "Golem", ["Golem"]),
-    (505, "Golem Fist", "Golem", ["GolemFistLeft", "GolemFistRight"]),
-    (506, "Golem Head", "Golem", ["GolemHead", "GolemHeadFree"]),
-    (507, "Duke Fishron", "Duke_Fishron", ["DukeFishron"]),
-    (508, "Sharkron", "Duke_Fishron", ["Sharkron", "Sharkron2"]),
-    (509, "Sharknado", "Duke_Fishron", ["Sharknado"]),
-    (510, "Lunatic Cultist", "Lunatic_Cultist", ["CultistBoss"]),
-    (511, "Ancient Doom", "Ancient_Doom", ["CultistBossClone"]),
-    (512, "Phantasm Dragon", "Phantasm_Dragon", ["CultistDragonHead"]),
-    (513, "Ancient Vision", "Ancient_Vision", ["AncientCultistSquidhead"]),
+    # ── Town NPCs ──
+    (1, "Guide", "Guide", ["Guide"], False),
+    (2, "Merchant", "Merchant", ["Merchant"], False),
+    (3, "Nurse", "Nurse", ["Nurse"], False),
+    (4, "Demolitionist", "Demolitionist", ["Demolitionist"], False),
+    (5, "Angler", "Angler", ["Angler"], False),
+    (6, "Dryad", "Dryad", ["Dryad"], False),
+    (7, "Arms Dealer", "Arms_Dealer", ["ArmsDealer"], False),
+    (8, "Dye Trader", "Dye_Trader", ["DyeTrader"], False),
+    (9, "Painter", "Painter", ["Painter"], False),
+    (10, "Stylist", "Stylist", ["Stylist"], False),
+    (11, "Zoologist", "Zoologist", ["Zoologist"], False),
+    (12, "Tavernkeep", "Tavernkeep", ["DD2Bartender", "Tavernkeep"], False),
+    (13, "Golfer", "Golfer", ["Golfer"], False),
+    (14, "Goblin Tinkerer", "Goblin_Tinkerer", ["GoblinTinkerer", "BoundGoblin"], False),
+    (15, "Witch Doctor", "Witch_Doctor", ["WitchDoctor"], False),
+    (16, "Mechanic", "Mechanic", ["Mechanic", "BoundMechanic"], False),
+    (17, "Clothier", "Clothier", ["Clothier"], False),
+    (18, "Wizard", "Wizard", ["Wizard", "BoundWizard"], True),
+    (19, "Steampunker", "Steampunker", ["Steampunker"], True),
+    (20, "Pirate", "Pirate_(NPC)", ["Pirate"], True),
+    (21, "Truffle", "Truffle", ["Truffle"], True),
+    (22, "Tax Collector", "Tax_Collector", ["TaxCollector"], True),
+    (23, "Cyborg", "Cyborg", ["Cyborg"], True),
+    (24, "Party Girl", "Party_Girl", ["PartyGirl"], False),
+    (25, "Princess", "Princess", ["Princess"], False),
+    (26, "Santa Claus", "Santa_Claus", ["SantaClaus"], True),
+    (27, "Town Cat", "Town_Cat", ["TownCat"], False),
+    (28, "Town Dog", "Town_Dog", ["TownDog"], False),
+    (29, "Town Bunny", "Town_Bunny", ["TownBunny"], False),
+    (30, "Nerdy Slime", "Town_Slimes", ["TownSlimeBlue"], False),
+    (31, "Cool Slime", "Town_Slimes", ["TownSlimeGreen"], False),
+    (32, "Elder Slime", "Town_Slimes", ["TownSlimeOld"], False),
+    (33, "Clumsy Slime", "Town_Slimes", ["TownSlimePurple"], False),
+    (34, "Diva Slime", "Town_Slimes", ["TownSlimeRainbow"], False),
+    (35, "Surly Slime", "Town_Slimes", ["TownSlimeRed"], False),
+    (36, "Mystic Slime", "Town_Slimes", ["TownSlimeYellow"], False),
+    (37, "Squire Slime", "Town_Slimes", ["TownSlimeCopper"], False),
+    (38, "Traveling Merchant", "Traveling_Merchant", ["TravellingMerchant"], False),
+    (39, "Skeleton Merchant", "Skeleton_Merchant", ["SkeletonMerchant"], False),
+    (40, "Old Man", "Old_Man", ["OldMan"], False),
+    # ── Critters ──
+    (41, "Mystic Frog", "Mystic_Frog", ["MysticFrog"], False),
+    (42, "Bunny", "Bunny", ["Bunny"], False),
+    (43, "Bunny (With a Hat)", "Bunny", ["PartyBunny"], False),
+    (44, "Explosive Bunny", "Explosive_Bunny", ["ExplosiveBunny"], False),
+    (45, "Bunny (Slime)", "Bunny", ["BunnySlimed"], False),
+    (46, "Bunny (Xmas)", "Bunny", ["BunnyXmas"], False),
+    (47, "Gold Bunny", "Gold_Bunny", ["GoldBunny"], False),
+    (48, "Bird", "Bird", ["Bird"], False),
+    (49, "Blue Jay", "Blue_Jay", ["BirdBlue"], False),
+    (50, "Cardinal", "Cardinal_(critter)", ["BirdRed"], False),
+    (51, "Scarlet Macaw", "Scarlet_Macaw", ["ScarletMacaw"], False),
+    (52, "Blue Macaw", "Blue_Macaw", ["BlueMacaw"], False),
+    (53, "Toucan", "Toucan", ["Toucan"], False),
+    (54, "Yellow Cockatiel", "Yellow_Cockatiel", ["YellowCockatiel"], False),
+    (55, "Gray Cockatiel", "Gray_Cockatiel", ["GrayCockatiel"], False),
+    (56, "Gold Bird", "Gold_Bird", ["GoldBird"], False),
+    (57, "Goldfish", "Goldfish_(NPC)", ["Goldfish"], False),
+    (58, "Gold Goldfish", "Gold_Goldfish", ["GoldGoldfish"], False),
+    (59, "Squirrel", "Squirrel", ["Squirrel"], False),
+    (60, "Red Squirrel", "Squirrel", ["SquirrelRed"], False),
+    (61, "Gold Squirrel", "Gold_Squirrel", ["GoldSquirrel"], False),
+    (62, "Mouse", "Mouse", ["Mouse"], False),
+    (63, "Gold Mouse", "Gold_Mouse", ["GoldMouse"], False),
+    (64, "Frog", "Frog", ["Frog"], False),
+    (65, "Gold Frog", "Gold_Frog", ["GoldFrog"], False),
+    (66, "Grasshopper", "Grasshopper", ["Grasshopper"], False),
+    (67, "Gold Grasshopper", "Gold_Grasshopper", ["GoldGrasshopper"], False),
+    (68, "Butterfly", "Butterfly", ["Butterfly"], False),
+    (69, "Gold Butterfly", "Gold_Butterfly", ["GoldButterfly"], False),
+    (70, "Worm", "Worm_(critter)", ["Worm"], False),
+    (71, "Gold Worm", "Gold_Worm", ["GoldWorm"], False),
+    (72, "Dragonfly", "Dragonfly", ["Dragonfly", "BlackDragonfly", "BlueDragonfly", "GreenDragonfly", "OrangeDragonfly", "RedDragonfly", "YellowDragonfly"], False),
+    (73, "Gold Dragonfly", "Gold_Dragonfly", ["GoldDragonfly"], False),
+    (74, "Seahorse", "Seahorse", ["Seahorse"], False),
+    (75, "Gold Seahorse", "Gold_Seahorse", ["GoldSeahorse"], False),
+    (76, "Water Strider", "Water_Strider", ["WaterStrider"], False),
+    (77, "Gold Water Strider", "Gold_Water_Strider", ["GoldWaterStrider"], False),
+    (78, "Ladybug", "Ladybug", ["Ladybug"], False),
+    (79, "Gold Ladybug", "Gold_Ladybug", ["GoldLadybug"], False),
+    (80, "Stinkbug", "Stinkbug", ["Stinkbug"], False),
+    (81, "Faeling", "Faeling", ["Faeling"], True),
+    (82, "Mallard Duck", "Duck", ["Duck2", "DuckWhite"], False),
+    (83, "Duck", "Duck", ["Duck"], False),
+    (84, "Turtle", "Turtle_(critter)", ["Turtle"], False),
+    (85, "Owl", "Owl", ["Owl"], False),
+    (86, "Firefly", "Firefly", ["Firefly"], False),
+    (87, "Enchanted Nightcrawler", "Enchanted_Nightcrawler", ["EnchantedNightcrawler"], False),
+    (88, "Pink Fairy", "Fairy", ["FairyCritterPink"], False),
+    (89, "Green Fairy", "Fairy", ["FairyCritterGreen"], False),
+    (90, "Blue Fairy", "Fairy", ["FairyCritterBlue"], False),
+    (91, "Rat", "Rat", ["Rat"], False),
+    (92, "Maggot", "Maggot", ["Maggot"], False),
+    (93, "Amethyst Squirrel", "Gem_Squirrel", ["GemSquirrelAmethyst"], False),
+    (94, "Topaz Squirrel", "Gem_Squirrel", ["GemSquirrelTopaz"], False),
+    (95, "Sapphire Squirrel", "Gem_Squirrel", ["GemSquirrelSapphire"], False),
+    (96, "Emerald Squirrel", "Gem_Squirrel", ["GemSquirrelEmerald"], False),
+    (97, "Ruby Squirrel", "Gem_Squirrel", ["GemSquirrelRuby"], False),
+    (98, "Diamond Squirrel", "Gem_Squirrel", ["GemSquirrelDiamond"], False),
+    (99, "Amber Squirrel", "Gem_Squirrel", ["GemSquirrelAmber"], False),
+    (100, "Amethyst Bunny", "Gem_Bunny", ["GemBunnyAmethyst"], False),
+    (101, "Topaz Bunny", "Gem_Bunny", ["GemBunnyTopaz"], False),
+    (102, "Sapphire Bunny", "Gem_Bunny", ["GemBunnySapphire"], False),
+    (103, "Emerald Bunny", "Gem_Bunny", ["GemBunnyEmerald"], False),
+    (104, "Ruby Bunny", "Gem_Bunny", ["GemBunnyRuby"], False),
+    (105, "Diamond Bunny", "Gem_Bunny", ["GemBunnyDiamond"], False),
+    (106, "Amber Bunny", "Gem_Bunny", ["GemBunnyAmber"], False),
+    (107, "Snail", "Snail", ["Snail"], False),
+    (108, "Truffle Worm", "Truffle_Worm", ["TruffleWorm"], True),
+    (109, "Penguin", "Penguin", ["Penguin"], False),
+    (110, "Penguin (Black)", "Penguin", ["PenguinBlack"], False),
+    (111, "Scorpion", "Scorpion_(critter)", ["Scorpion"], False),
+    (112, "Black Scorpion", "Scorpion_(critter)", ["ScorpionBlack"], False),
+    (113, "Grebe", "Grebe", ["Grebe"], False),
+    (114, "Pupfish", "Pupfish", ["Pupfish"], False),
+    (115, "Seagull", "Seagull", ["Seagull"], False),
+    (116, "Sea Turtle", "Sea_Turtle", ["SeaTurtle"], False),
+    (117, "Pufferfish", "Pufferfish_(critter)", ["Pufferfish"], False),
+    (118, "Dolphin", "Dolphin", ["Dolphin"], False),
+    (119, "Jungle Turtle", "Jungle_Turtle", ["JungleTurtle"], False),
+    (120, "Grubby", "Grubby", ["Grubby"], False),
+    (121, "Sluggy", "Sluggy", ["Sluggy"], False),
+    (122, "Buggy", "Buggy", ["Buggy"], False),
+    (123, "Hell Butterfly", "Hell_Butterfly", ["HellButterfly"], False),
+    (124, "Lavafly", "Lavafly", ["Lavafly"], False),
+    (125, "Magma Snail", "Magma_Snail", ["MagmaSnail"], False),
+    (126, "Lightning Bug", "Lightning_Bug", ["LightningBug"], True),
+    (127, "Prismatic Lacewing", "Prismatic_Lacewing", ["EmpressButterfly"], True),
+    (128, "Glowing Snail", "Glowing_Snail", ["GlowingSnail"], False),
+    (129, "Gnome", "Gnome", ["Gnome"], False),
+    # ── Pre-Hardmode Surface ──
+    (130, "Goblin Scout", "Goblin_Scout", ["GoblinScout"], False),
+    (131, "Green Slime", "Green_Slime", ["GreenSlime"], False),
+    (132, "Blue Slime", "Blue_Slime", ["BlueSlime"], False),
+    (133, "Purple Slime", "Purple_Slime", ["PurpleSlime"], False),
+    (134, "Pinky", "Pinky", ["Pinky"], False),
+    (135, "Windy Balloon", "Windy_Balloon", ["WindyBalloon"], False),
+    (136, "Angry Dandelion", "Angry_Dandelion", ["AngryDandelion"], False),
+    (137, "Umbrella Slime", "Umbrella_Slime", ["UmbrellaSlime"], False),
+    (138, "Flying Fish", "Flying_Fish", ["FlyingFish"], False),
+    (139, "Angry Nimbus", "Angry_Nimbus", ["AngryNimbus"], True),
+    (140, "Demon Eye (Dilated)", "Demon_Eye", ["DialatedEye"], False),
+    (141, "Demon Eye (Sleepy)", "Demon_Eye", ["SleepyEye"], False),
+    (142, "Demon Eye (Purple)", "Demon_Eye", ["PurpleEye"], False),
+    (143, "Demon Eye", "Demon_Eye", ["DemonEye"], False),
+    (144, "Demon Eye (Green)", "Demon_Eye", ["GreenEye"], False),
+    (145, "Demon Eye (Cataract)", "Demon_Eye", ["CataractEye"], False),
+    (146, "Wandering Eye", "Wandering_Eye", ["WanderingEye"], False),
+    (147, "Zombie (Female)", "Zombie", ["FemaleZombie"], False),
+    (148, "Zombie (Slimed)", "Zombie", ["SlimedZombie"], False),
+    (149, "Zombie (Bald)", "Zombie", ["BaldZombie", "BigBaldZombie"], False),
+    (150, "Zombie", "Zombie", ["Zombie"], False),
+    (151, "Zombie (Twiggy)", "Zombie", ["TwiggyZombie"], False),
+    (152, "Zombie (Torch)", "Zombie", ["TorchZombie"], False),
+    (153, "Zombie (Swamp)", "Zombie", ["SwampZombie"], False),
+    (154, "Zombie (Pincushion)", "Zombie", ["PincushionZombie"], False),
+    (155, "Raincoat Zombie", "Raincoat_Zombie", ["RaincoatZombie"], False),
+    (156, "Possessed Armor", "Possessed_Armor", ["PossessedArmor"], True),
+    (157, "Werewolf", "Werewolf", ["Werewolf"], True),
+    (158, "Wraith", "Wraith", ["Wraith"], True),
+    (159, "Corrupt Bunny", "Corrupt_Bunny", ["CorruptBunny"], False),
+    (160, "Corrupt Penguin", "Corrupt_Penguin", ["CorruptPenguin"], False),
+    (161, "Vicious Bunny", "Vicious_Bunny", ["CrimsonBunny"], False),
+    (162, "Vicious Penguin", "Vicious_Penguin", ["CrimsonPenguin"], False),
+    # ── Blood Moon ──
+    (163, "Blood Zombie", "Blood_Zombie", ["BloodZombie"], False),
+    (164, "The Groom", "The_Groom", ["TheGroom"], False),
+    (165, "The Bride", "The_Bride", ["TheBride"], False),
+    (166, "Zombie Merman", "Zombie_Merman", ["ZombieMerman"], False),
+    (167, "Clown", "Clown", ["Clown"], True),
+    (168, "Blood Squid", "Blood_Squid", ["BloodSquid"], True),
+    (169, "Blood Eel", "Blood_Eel", ["BloodEelHead"], True),
+    (170, "Corrupt Goldfish", "Corrupt_Goldfish", ["CorruptGoldfish", "CrimsonGoldfish"], False),
+    (171, "Vicious Goldfish", "Vicious_Goldfish", ["CrimsonGoldfish"], False),
+    (172, "Drippler", "Drippler", ["Drippler"], False),
+    (173, "Chattering Teeth Bomb", "Chattering_Teeth_Bomb", ["ChatteringTeethBomb"], True),
+    (174, "Wandering Eye Fish", "Wandering_Eye_Fish", ["EyeballFlyingFish"], True),
+    (175, "Hemogoblin Shark", "Hemogoblin_Shark", ["GoblinShark"], True),
+    (176, "Dreadnautilus", "Dreadnautilus", ["BloodNautilus"], True),
+    # ── Seasonal / Special ──
+    (177, "Hoppin' Jack", "Hoppin%27_Jack", ["HoppinJack"], False),
+    (178, "Maggot Zombie", "Maggot_Zombie", ["MaggotZombie"], False),
+    (179, "Moss Zombie", "Zombie", ["MossZombie"], False),
+    (180, "Raven", "Raven", ["Raven"], False),
+    (181, "Ghost", "Ghost", ["Ghost"], False),
+    (182, "Statue", "Statues", ["ArmedZombie", "ArmedZombiePincushion", "ArmedZombieTwiggy", "ArmedZombieSwamp", "ArmedZombieCenx"], False),
+    # ── Underground / Cavern ──
+    (183, "Red Slime", "Red_Slime", ["RedSlime"], False),
+    (184, "Yellow Slime", "Yellow_Slime", ["YellowSlime"], False),
+    (185, "Toxic Sludge", "Toxic_Sludge", ["ToxicSludge"], True),
+    (186, "Giant Worm", "Giant_Worm", ["GiantWormHead"], False),
+    (187, "Digger", "Digger", ["DiggerHead"], True),
+    (188, "Baby Slime", "Baby_Slime", ["BabySlime"], False),
+    (189, "Black Slime", "Black_Slime", ["BlackSlime"], False),
+    (190, "Shimmer Slime", "Shimmer_Slime", ["ShimmerSlime"], False),
+    (191, "Mother Slime", "Mother_Slime", ["MotherSlime"], False),
+    (192, "Cochineal Beetle", "Cochineal_Beetle", ["CochinealBeetle"], False),
+    (193, "Skeleton (Misassembled)", "Skeleton", ["MisassembledSkeleton", "SmallMisassembledSkeleton", "BigMisassembledSkeleton"], False),
+    (194, "Skeleton", "Skeleton", ["Skeleton", "SmallSkeleton", "BigSkeleton"], False),
+    (195, "Salamander", "Salamander", ["Salamander", "Salamander2", "Salamander3", "Salamander4", "Salamander5", "Salamander6", "Salamander7", "Salamander8", "Salamander9"], False),
+    (196, "Skeleton (Headache)", "Skeleton", ["HeadacheSkeleton", "SmallHeadacheSkeleton", "BigHeadacheSkeleton"], False),
+    (197, "Skeleton (Pantless)", "Skeleton", ["PantlessSkeleton", "SmallPantlessSkeleton", "BigPantlessSkeleton"], False),
+    (198, "Crawdad", "Crawdad", ["Crawdad", "Crawdad2"], False),
+    (199, "Undead Miner", "Undead_Miner", ["UndeadMiner"], False),
+    (200, "Skeleton Archer", "Skeleton_Archer", ["SkeletonArcher"], True),
+    (201, "Nymph", "Nymph", ["Nymph"], False),
+    (202, "Armored Skeleton", "Armored_Skeleton", ["ArmoredSkeleton"], True),
+    (203, "Rock Golem", "Rock_Golem", ["RockGolem"], False),
+    (204, "Tim", "Tim", ["Tim"], False),
+    (205, "Rune Wizard", "Rune_Wizard", ["RuneWizard"], True),
+    (206, "Cave Bat", "Cave_Bat", ["CaveBat"], False),
+    (207, "Giant Bat", "Giant_Bat", ["GiantBat"], True),
+    (208, "Blue Jellyfish", "Blue_Jellyfish", ["BlueJellyfish"], False),
+    (209, "Green Jellyfish", "Green_Jellyfish", ["GreenJellyfish"], True),
+    (210, "Mimic", "Mimic", ["Mimic"], True),
+    (211, "Giant Shelly", "Giant_Shelly", ["GiantShelly", "GiantShelly2"], False),
+    (212, "Lost Girl", "Lost_Girl", ["LostGirl"], False),
+    (213, "Granite Golem", "Granite_Golem", ["GraniteGolem"], False),
+    (214, "Granite Elemental", "Granite_Elemental", ["GraniteFlyer"], False),
+    (215, "Hoplite", "Hoplite", ["GreekSkeleton"], False),
+    (216, "Medusa", "Medusa", ["Medusa"], True),
+    (217, "Spore Skeleton", "Spore_Skeleton", ["SporeSkeleton"], False),
+    (218, "Spore Bat", "Spore_Bat", ["SporeBat"], False),
+    (219, "Wall Creeper", "Wall_Creeper", ["WallCreeper", "WallCreeperWall"], False),
+    (220, "Black Recluse", "Black_Recluse", ["BlackRecluse", "BlackRecluseWall"], True),
+    # ── Snow Biome ──
+    (221, "Ice Slime", "Ice_Slime", ["IceSlime"], False),
+    (222, "Frozen Zombie", "Frozen_Zombie", ["FrozenZombie"], False),
+    (223, "Ice Golem", "Ice_Golem", ["IceGolem"], True),
+    (224, "Wolf", "Wolf", ["Wolf"], True),
+    (225, "Spiked Ice Slime", "Spiked_Ice_Slime", ["SpikedIceSlime"], False),
+    (226, "Cyan Beetle", "Cyan_Beetle", ["CyanBeetle"], False),
+    (227, "Undead Viking", "Undead_Viking", ["UndeadViking"], False),
+    (228, "Snow Flinx", "Snow_Flinx", ["SnowFlinx"], False),
+    (229, "Armored Viking", "Armored_Viking", ["ArmoredViking"], True),
+    (230, "Icy Merman", "Icy_Merman", ["IcyMerman"], True),
+    (231, "Ice Bat", "Ice_Bat", ["IceBat"], False),
+    (232, "Ice Elemental", "Ice_Elemental", ["IceElemental"], True),
+    (233, "Ice Mimic", "Ice_Mimic", ["IceMimic"], True),
+    (234, "Ice Tortoise", "Ice_Tortoise", ["IceTortoise"], True),
+    # ── Desert ──
+    (235, "Vulture", "Vulture", ["Vulture"], False),
+    (236, "Sand Slime", "Sand_Slime", ["SandSlime"], False),
+    (237, "Antlion Larva", "Antlion_Larva", ["LarvaeAntlion"], False),
+    (238, "Giant Antlion Charger", "Antlion_Charger", ["WalkingAntlion"], False),
+    (239, "Mummy", "Mummy", ["Mummy"], True),
+    (240, "Ghoul", "Ghoul", ["DesertGhoul", "DesertGhoulCorruption", "DesertGhoulCrimson", "DesertGhoulHallow"], True),
+    (241, "Basilisk", "Basilisk", ["DesertBeast"], True),
+    (242, "Tomb Crawler", "Tomb_Crawler", ["TombCrawlerHead"], False),
+    (243, "Antlion", "Antlion", ["Antlion"], False),
+    (244, "Sand Poacher", "Sand_Poacher", ["DesertScorpionWalk", "DesertScorpionWall"], True),
+    (245, "Giant Antlion Swarmer", "Antlion_Swarmer", ["FlyingAntlion", "GiantFlyingAntlion"], False),
+    (246, "Antlion Charger", "Antlion_Charger", ["WalkingAntlion"], False),
+    (247, "Dune Splicer", "Dune_Splicer", ["DuneSplicerHead"], True),
+    (248, "Angry Tumbler", "Angry_Tumbler", ["AngryTumbler"], False),
+    (249, "Antlion Swarmer", "Antlion_Swarmer", ["FlyingAntlion"], False),
+    (250, "Sand Elemental", "Sand_Elemental", ["SandElemental"], True),
+    (251, "Sand Shark", "Sand_Shark", ["SandShark", "SandsharkCorrupt", "SandsharkCrimson", "SandsharkHallow"], True),
+    # ── Ocean ──
+    (252, "Crab", "Crab", ["Crab"], False),
+    (253, "Sea Snail", "Sea_Snail", ["SeaSnail"], False),
+    (254, "Shark", "Shark", ["Shark"], False),
+    (255, "Orca", "Orca", ["Orca"], False),
+    (256, "Squid", "Squid", ["Squid"], False),
+    (257, "Pink Jellyfish", "Pink_Jellyfish", ["PinkJellyfish"], False),
+    # ── Jungle ──
+    (258, "Jungle Slime", "Jungle_Slime", ["JungleSlime"], False),
+    (259, "Snatcher", "Snatcher", ["Snatcher"], False),
+    (260, "Giant Flying Fox", "Giant_Flying_Fox", ["GiantFlyingFox"], True),
+    (261, "Derpling", "Derpling", ["Derpling"], True),
+    (262, "Spiked Jungle Slime", "Spiked_Jungle_Slime", ["SpikedJungleSlime"], False),
+    (263, "Lac Beetle", "Lac_Beetle", ["LacBeetle"], False),
+    (264, "Doctor Bones", "Doctor_Bones", ["DoctorBones"], False),
+    (265, "Bee", "Bee", ["Bee"], False),
+    (266, "Bee (Larger)", "Bee", ["BeeSmall"], False),
+    (267, "Hornet (Stingy)", "Hornet", ["HornetStingy"], False),
+    (268, "Hornet (Spikey)", "Hornet", ["HornetSpikey"], False),
+    (269, "Hornet", "Hornet", ["Hornet"], False),
+    (270, "Hornet (Fatty)", "Hornet", ["HornetFatty"], False),
+    (271, "Hornet (Honey)", "Hornet", ["HornetHoney"], False),
+    (272, "Hornet (Leafy)", "Hornet", ["HornetLeafy"], False),
+    (273, "Moss Hornet", "Moss_Hornet", ["MossHornet"], True),
+    (274, "Moth", "Moth", ["Moth"], True),
+    (275, "Man Eater", "Man_Eater", ["ManEater"], False),
+    (276, "Angry Trapper", "Angry_Trapper", ["AngryTrapper"], True),
+    (277, "Jungle Bat", "Jungle_Bat", ["JungleBat"], False),
+    (278, "Piranha", "Piranha", ["Piranha"], False),
+    (279, "Angler Fish", "Angler_Fish", ["AnglerFish"], False),
+    (280, "Arapaima", "Arapaima", ["Arapaima"], True),
+    (281, "Giant Tortoise", "Giant_Tortoise", ["GiantTortoise"], True),
+    (282, "Jungle Creeper", "Jungle_Creeper", ["JungleCreeper", "JungleCreeperWall"], True),
+    # ── Meteor / Dungeon ──
+    (283, "Meteor Head", "Meteor_Head", ["MeteorHead"], False),
+    (284, "Dungeon Slime", "Dungeon_Slime", ["DungeonSlime"], False),
+    (285, "Angry Bones", "Angry_Bones", ["AngryBones"], False),
+    (286, "Angry Bones (Big)", "Angry_Bones", ["AngryBonesBig"], False),
+    (287, "Angry Bones (Big Muscle)", "Angry_Bones", ["AngryBonesBigMuscle"], False),
+    (288, "Angry Bones (Big Helmet)", "Angry_Bones", ["AngryBonesBigHelmet"], False),
+    (289, "Blue Armored Bones (Mace)", "Blue_Armored_Bones", ["BlueArmoredBones"], True),
+    (290, "Skeleton Sniper", "Skeleton_Sniper", ["SkeletonSniper"], True),
+    (291, "Tactical Skeleton", "Tactical_Skeleton", ["TacticalSkeleton"], True),
+    (292, "Skeleton Commando", "Skeleton_Commando", ["SkeletonCommando"], True),
+    (293, "Hell Armored Bones", "Hell_Armored_Bones", ["HellArmoredBones"], True),
+    (294, "Rusty Armored Bones (Sword No Armor)", "Rusty_Armored_Bones", ["RustyArmoredBonesAxe"], True),
+    (295, "Rusty Armored Bones (Flail)", "Rusty_Armored_Bones", ["RustyArmoredBonesFlail"], True),
+    (296, "Hell Armored Bones (Mace)", "Hell_Armored_Bones", ["HellArmoredBonesMace"], True),
+    (297, "Blue Armored Bones", "Blue_Armored_Bones", ["BlueArmoredBonesMace"], True),
+    (298, "Rusty Armored Bones (Sword)", "Rusty_Armored_Bones", ["RustyArmoredBonesSword"], True),
+    (299, "Hell Armored Bones (Spike Shield)", "Hell_Armored_Bones", ["HellArmoredBonesSpikeShield"], True),
+    (300, "Blue Armored Bones (No Pants)", "Blue_Armored_Bones", ["BlueArmoredBonesNoPants"], True),
+    (301, "Hell Armored Bones (Sword)", "Hell_Armored_Bones", ["HellArmoredBonesSword"], True),
+    (302, "Rusty Armored Bones (Axe)", "Rusty_Armored_Bones", ["RustyArmoredBonesAxe"], True),
+    (303, "Blue Armored Bones (Sword)", "Blue_Armored_Bones", ["BlueArmoredBonesSword"], True),
+    (304, "Bone Lee", "Bone_Lee", ["BoneLee"], True),
+    (305, "Paladin", "Paladin", ["Paladin"], True),
+    (306, "Dark Caster", "Dark_Caster", ["DarkCaster"], False),
+    (307, "Librarian Skeleton", "Angry_Bones", ["LibrarianSkeleton"], False),
+    (308, "Diabolist (Red)", "Diabolist", ["DiabolistRed"], True),
+    (309, "Diabolist (White)", "Diabolist", ["DiabolistWhite"], True),
+    (310, "Necromancer", "Necromancer", ["Necromancer"], True),
+    (311, "Ragged Caster", "Ragged_Caster", ["RaggedCaster"], True),
+    (312, "Necromancer (Armored)", "Necromancer", ["NecromancerArmored"], True),
+    (313, "Ragged Caster (Open Coat)", "Ragged_Caster", ["RaggedCasterOpenCoat"], True),
+    (314, "Water Bolt Mimic", "Water_Bolt_Mimic", ["WaterBoltMimic"], False),
+    (315, "Cursed Skull", "Cursed_Skull", ["CursedSkull"], False),
+    (316, "Giant Cursed Skull", "Giant_Cursed_Skull", ["GiantCursedSkull"], True),
+    (317, "Dungeon Guardian", "Dungeon_Guardian", ["DungeonGuardian"], False),
+    (318, "Dungeon Spirit", "Dungeon_Spirit", ["DungeonSpirit"], True),
+    # ── Underworld ──
+    (319, "Lava Slime", "Lava_Slime", ["LavaSlime"], False),
+    (320, "Tortured Soul", "Tortured_Soul", ["TorturedSoul"], True),
+    (321, "Bone Serpent", "Bone_Serpent", ["BoneSerpentHead"], False),
+    (322, "Fire Imp", "Fire_Imp", ["FireImp"], False),
+    (323, "Hellbat", "Hellbat", ["Hellbat"], False),
+    (324, "Demon", "Demon", ["Demon"], False),
+    (325, "Voodoo Demon", "Voodoo_Demon", ["VoodooDemon"], False),
+    (326, "Lava Bat", "Lava_Bat", ["Lavabat"], True),
+    (327, "Red Devil", "Red_Devil", ["RedDevil"], True),
+    # ── Sky ──
+    (328, "Wyvern", "Wyvern", ["WyvernHead"], True),
+    (329, "Harpy", "Harpy", ["Harpy"], False),
+    (330, "Martian Probe", "Martian_Probe", ["MartianProbe"], True),
+    # ── Corruption ──
+    (331, "Slimeling", "Slimeling", ["Slimeling"], True),
+    (332, "Corrupt Slime", "Corrupt_Slime", ["CorruptSlime"], True),
+    (333, "Eater of Souls", "Eater_of_Souls", ["EaterofSouls"], False),
+    (334, "Corruptor", "Corruptor", ["Corruptor"], True),
+    (335, "Devourer", "Devourer", ["DevourerHead"], False),
+    (336, "World Feeder", "World_Feeder", ["SeekerHead"], True),
+    (337, "Clinger", "Clinger", ["Clinger"], True),
+    (338, "Slimer", "Slimer", ["Slimer", "Slimer2"], True),
+    (339, "Cursed Hammer", "Cursed_Hammer", ["CursedHammer"], True),
+    (340, "Corrupt Mimic", "Corrupt_Mimic", ["BigMimicCorruption"], True),
+    (341, "Pigron (Corrupt)", "Pigron", ["PigronCorruption"], True),
+    (342, "Bone Biter", "Bone_Biter", ["DesertDjinn"], True),
+    (343, "Dark Mummy", "Dark_Mummy", ["DarkMummy"], True),
+    (344, "Vile Ghoul", "Ghoul", ["DesertGhoulCorruption"], True),
+    # ── Crimson ──
+    (345, "Crimslime", "Crimslime", ["Crimslime"], True),
+    (346, "Face Monster", "Face_Monster", ["FaceMonster"], False),
+    (347, "Crimera", "Crimera", ["Crimera"], False),
+    (348, "Blood Feeder", "Blood_Feeder", ["BloodFeeder"], True),
+    (349, "Blood Jelly", "Blood_Jelly", ["BloodJelly"], True),
+    (350, "Floaty Gross", "Floaty_Gross", ["FloatyGross"], True),
+    (351, "Ichor Sticker", "Ichor_Sticker", ["IchorSticker"], True),
+    (352, "Crimson Axe", "Crimson_Axe", ["CrimsonAxe"], True),
+    (353, "Blood Crawler", "Blood_Crawler", ["BloodCrawler", "BloodCrawlerWall"], False),
+    (354, "Herpling", "Herpling", ["Herpling"], True),
+    (355, "Crimson Mimic", "Crimson_Mimic", ["BigMimicCrimson"], True),
+    (356, "Pigron (Crimson)", "Pigron", ["PigronCrimson"], True),
+    (357, "Flesh Reaver", "Flesh_Reaver", ["DesertDjinn"], True),
+    (358, "Blood Mummy", "Blood_Mummy", ["BloodMummy"], True),
+    (359, "Tainted Ghoul", "Ghoul", ["DesertGhoulCrimson"], True),
+    (360, "Lamia", "Lamia", ["DesertLamiaDark"], True),
+    (361, "Desert Spirit", "Desert_Spirit", ["DesertDjinn"], True),
+    # ── Hallow ──
+    (362, "Rainbow Slime", "Rainbow_Slime", ["RainbowSlime", "GoldenSlime"], True),
+    (363, "Pixie", "Pixie", ["Pixie"], True),
+    (364, "Gastropod", "Gastropod", ["Gastropod"], True),
+    (365, "Unicorn", "Unicorn", ["Unicorn"], True),
+    (366, "Illuminant Slime", "Illuminant_Slime", ["IlluminantSlime"], True),
+    (367, "Chaos Elemental", "Chaos_Elemental", ["ChaosElemental"], True),
+    (368, "Illuminant Bat", "Illuminant_Bat", ["IlluminantBat"], True),
+    (369, "Enchanted Sword", "Enchanted_Sword_(NPC)", ["EnchantedSword"], True),
+    (370, "Hallowed Mimic", "Hallowed_Mimic", ["BigMimicHallow", "BigMimicJungle"], True),
+    (371, "Pigron", "Pigron", ["PigronHallow"], True),
+    (372, "Crystal Thresher", "Crystal_Thresher", ["DesertBeast"], True),
+    (373, "Light Mummy", "Light_Mummy", ["LightMummy"], True),
+    (374, "Dreamer Ghoul", "Ghoul", ["DesertGhoulHallow"], True),
+    (375, "Lamia (Light)", "Lamia", ["DesertLamiaLight"], True),
+    # ── Mushroom ──
+    (376, "Spore Zombie (Mushroom)", "Spore_Zombie", ["ZombieMushroomHat"], False),
+    (377, "Spore Zombie (Hat Mushroom)", "Spore_Zombie", ["ZombieMushroom"], False),
+    (378, "Anomura Fungus", "Anomura_Fungus", ["AnomuraFungus"], True),
+    (379, "Mushi Ladybug", "Mushi_Ladybug", ["MushiLadybug"], True),
+    (380, "Fungi Bulb", "Fungi_Bulb", ["FungiBulb"], True),
+    (381, "Giant Fungi Bulb", "Giant_Fungi_Bulb", ["GiantFungiBulb"], True),
+    (382, "Fungo Fish", "Fungo_Fish", ["FungoFish"], True),
+    # ── Temple ──
+    (383, "Lihzahrd", "Lihzahrd", ["Lihzahrd", "LihzahrdCrawler"], True),
+    (384, "Flying Snake", "Flying_Snake", ["FlyingSnake"], True),
+    # ── Goblin Invasion ──
+    (385, "Goblin Peon", "Goblin_Peon", ["GoblinPeon"], False),
+    (386, "Goblin Thief", "Goblin_Thief", ["GoblinThief"], False),
+    (387, "Goblin Archer", "Goblin_Archer", ["GoblinArcher"], False),
+    (388, "Goblin Warrior", "Goblin_Warrior", ["GoblinWarrior"], False),
+    (389, "Goblin Warlock", "Goblin_Summoner", ["GoblinSummoner"], True),
+    (390, "Goblin Sorcerer", "Goblin_Sorcerer", ["GoblinSorcerer"], False),
+    (391, "Shadowflame Apparition", "Shadowflame_Apparition", ["ShadowFlameApparition"], True),
+    # ── Old One's Army ──
+    (392, "Old One's Skeleton", "Old_One%27s_Skeleton", ["DD2SkeletonT1"], False),
+    (393, "Etherian Goblin", "Etherian_Goblin", ["DD2GoblinT1"], False),
+    (394, "Etherian Goblin Bomber", "Etherian_Goblin_Bomber", ["DD2GoblinBomberT1"], False),
+    (395, "Kobold", "Kobold", ["DD2KoboldWalkerT2"], True),
+    (396, "Etherian Javelin Thrower", "Etherian_Javelin_Thrower", ["DD2JavelinstT1"], False),
+    (397, "Wither Beast", "Wither_Beast", ["DD2WitherBeastT2"], True),
+    (398, "Drakin", "Drakin", ["DD2DrakinT2"], True),
+    (399, "Ogre", "Ogre", ["DD2OgreT2"], True),
+    (400, "Kobold Glider", "Kobold_Glider", ["DD2KoboldFlyerT2"], True),
+    (401, "Etherian Wyvern", "Etherian_Wyvern", ["DD2WyvernT1"], False),
+    (402, "Dark Mage", "Dark_Mage", ["DD2DarkMageT1"], False),
+    (403, "Betsy", "Betsy", ["DD2Betsy"], True),
+    (404, "Etherian Lightning Bug", "Etherian_Lightning_Bug", ["DD2LightningBugT3"], True),
+    # ── Pirate Invasion ──
+    (405, "Pirate Deadeye", "Pirate_Deadeye", ["PirateDeadeye"], True),
+    (406, "Pirate Deckhand", "Pirate_Deckhand", ["PirateDeckhand"], True),
+    (407, "Pirate Crossbower", "Pirate_Crossbower", ["PirateCrossbower"], True),
+    (408, "Pirate Corsair", "Pirate_Corsair", ["PirateCorsair"], True),
+    (409, "Pirate Captain", "Pirate_Captain", ["PirateCaptain"], True),
+    (410, "Parrot", "Parrot", ["Parrot"], True),
+    (411, "Flying Dutchman", "Flying_Dutchman", ["FlyingDutchman"], True),
+    # ── Martian Madness ──
+    (412, "Brain Scrambler", "Brain_Scrambler", ["BrainScrambler"], True),
+    (413, "Ray Gunner", "Ray_Gunner", ["RayGunner"], True),
+    (414, "Martian Engineer", "Martian_Engineer", ["MartianEngineer"], True),
+    (415, "Martian Officer", "Martian_Officer", ["MartianOfficer"], True),
+    (416, "Gigazapper", "Gigazapper", ["Gigazapper"], True),
+    (417, "Scutlix", "Scutlix", ["Scutlix"], True),
+    (418, "Gray Grunt", "Gray_Grunt", ["GrayGrunt"], True),
+    (419, "Martian Walker", "Martian_Walker", ["MartianWalker"], True),
+    (420, "Tesla Turret", "Tesla_Turret", ["MartianTurret"], True),
+    (421, "Martian Drone", "Martian_Drone", ["MartianDrone"], True),
+    (422, "Scutlix Gunner", "Scutlix_Gunner", ["ScutlixRider"], True),
+    (423, "Martian Saucer", "Martian_Saucer", ["MartianSaucer", "MartianSaucerCore"], True),
+    # ── Solar Eclipse ──
+    (424, "Fritz", "Fritz", ["Fritz"], True),
+    (425, "Frankenstein", "Frankenstein", ["Frankenstein"], True),
+    (426, "Creature from the Deep", "Creature_from_the_Deep", ["CreatureFromTheDeep"], True),
+    (427, "Swamp Thing", "Swamp_Thing", ["SwampThing"], True),
+    (428, "Dr. Man Fly", "Dr._Man_Fly", ["DrManFly"], True),
+    (429, "The Possessed", "The_Possessed", ["ThePossessed"], True),
+    (430, "Psycho", "Psycho", ["Psycho"], True),
+    (431, "Butcher", "Butcher", ["Butcher"], True),
+    (432, "Vampire", "Vampire", ["Vampire"], True),
+    (433, "Eyezor", "Eyezor", ["Eyezor"], True),
+    (434, "Nailhead", "Nailhead", ["Nailhead"], True),
+    (435, "Reaper", "Reaper", ["Reaper"], True),
+    (436, "Deadly Sphere", "Deadly_Sphere", ["DeadlySphere"], True),
+    (437, "Mothron", "Mothron", ["Mothron"], True),
+    (438, "Baby Mothron", "Mothron", ["MothronEgg", "MothronSpawn"], True),
+    # ── Pumpkin Moon ──
+    (439, "Scarecrow (Cloth Face Stick)", "Scarecrow", ["Scarecrow1"], True),
+    (440, "Scarecrow (Cloth Face)", "Scarecrow", ["Scarecrow2"], True),
+    (441, "Scarecrow (Guy Fawkes Stick)", "Scarecrow", ["Scarecrow3"], True),
+    (442, "Scarecrow (Guy Fawkes)", "Scarecrow", ["Scarecrow4"], True),
+    (443, "Scarecrow (Cloth Hat Stick)", "Scarecrow", ["Scarecrow5"], True),
+    (444, "Scarecrow (Cloth Hat)", "Scarecrow", ["Scarecrow6"], True),
+    (445, "Scarecrow (Pumpkin Hat Stick)", "Scarecrow", ["Scarecrow7"], True),
+    (446, "Scarecrow (Pumpkin Hat)", "Scarecrow", ["Scarecrow8"], True),
+    (447, "Scarecrow (Pumpkin Head Stick)", "Scarecrow", ["Scarecrow9"], True),
+    (448, "Scarecrow (Pumpkin Head)", "Scarecrow", ["Scarecrow10"], True),
+    (449, "Splinterling", "Splinterling", ["Splinterling"], True),
+    (450, "Poltergeist", "Poltergeist", ["Poltergeist"], True),
+    (451, "Hellhound", "Hellhound", ["Hellhound"], True),
+    (452, "Headless Horseman", "Headless_Horseman", ["HeadlessHorseman"], True),
+    (453, "Mourning Wood", "Mourning_Wood", ["MourningWood"], True),
+    (454, "Pumpking", "Pumpking", ["Pumpking"], True),
+    # ── Frost Moon ──
+    (455, "Zombie Elf (Girl)", "Zombie_Elf", ["ZombieElfGirl"], True),
+    (456, "Zombie Elf", "Zombie_Elf", ["ZombieElf"], True),
+    (457, "Zombie Elf (Beard)", "Zombie_Elf", ["ZombieElfBeard"], True),
+    (458, "Gingerbread Man", "Gingerbread_Man", ["GingerbreadMan"], True),
+    (459, "Elf Archer", "Elf_Archer", ["ElfArcher"], True),
+    (460, "Nutcracker", "Nutcracker", ["Nutcracker"], True),
+    (461, "Krampus", "Krampus", ["Krampus"], True),
+    (462, "Yeti", "Yeti", ["Yeti"], True),
+    (463, "Present Mimic", "Present_Mimic", ["PresentMimic"], True),
+    (464, "Everscream", "Everscream", ["Everscream"], True),
+    (465, "Ice Queen", "Ice_Queen", ["IceQueen"], True),
+    (466, "Santa-NK1", "Santa-NK1", ["SantaNK1"], True),
+    (467, "Flocko", "Flocko", ["Flocko"], True),
+    (468, "Elf Copter", "Elf_Copter", ["ElfCopter"], True),
+    # ── Bosses (Pre-Hardmode) ──
+    (469, "King Slime", "King_Slime", ["KingSlime"], False),
+    (470, "Spiked Slime", "King_Slime", ["SlimeSpiked"], False),
+    (471, "Eye of Cthulhu", "Eye_of_Cthulhu", ["EyeofCthulhu"], False),
+    (472, "Servant of Cthulhu", "Servant_of_Cthulhu", ["ServantofCthulhu"], False),
+    (473, "Eater of Worlds (Head)", "Eater_of_Worlds", ["EaterofWorldsHead"], False),
+    (474, "Eater of Worlds (Body)", "Eater_of_Worlds", ["EaterofWorldsBody"], False),
+    (475, "Eater of Worlds (Tail)", "Eater_of_Worlds", ["EaterofWorldsTail"], False),
+    (476, "Brain of Cthulhu", "Brain_of_Cthulhu", ["BrainofCthulhu"], False),
+    (477, "Creeper", "Creeper_(enemy)", ["Creeper"], False),
+    (478, "Queen Bee", "Queen_Bee", ["QueenBee"], False),
+    (479, "Skeletron", "Skeletron", ["SkeletronHead"], False),
+    (480, "Skeletron Hand", "Skeletron", ["SkeletronHand"], False),
+    (481, "Deerclops", "Deerclops", ["Deerclops"], False),
+    (482, "Wall of Flesh", "Wall_of_Flesh", ["WallofFlesh", "WallofFleshEye"], False),
+    (483, "The Hungry", "The_Hungry", ["TheHungry"], False),
+    (484, "The Hungry II", "The_Hungry_II", ["TheHungryII"], False),
+    (485, "Leech", "Leech", ["LeechHead"], False),
+    # ── Bosses (Hardmode) ──
+    (486, "Queen Slime", "Queen_Slime", ["QueenSlimeBoss"], True),
+    (487, "Crystal Slime", "Queen_Slime", ["QueenSlimeMinionBlue"], True),
+    (488, "Heavenly Slime", "Queen_Slime", ["QueenSlimeMinionPink"], True),
+    (489, "Bouncy Slime", "Queen_Slime", ["QueenSlimeMinionPurple"], True),
+    (490, "Retinazer", "Retinazer", ["Retinazer"], True),
+    (491, "Spazmatism", "Spazmatism", ["Spazmatism"], True),
+    (492, "The Destroyer", "The_Destroyer", ["TheDestroyer", "TheDestroyerBody", "TheDestroyerTail"], True),
+    (493, "Probe", "Probe", ["Probe"], True),
+    (494, "Skeletron Prime", "Skeletron_Prime", ["SkeletronPrime"], True),
+    (495, "Prime Cannon", "Skeletron_Prime", ["PrimeCannon"], True),
+    (496, "Prime Saw", "Skeletron_Prime", ["PrimeSaw"], True),
+    (497, "Prime Vice", "Skeletron_Prime", ["PrimeVice"], True),
+    (498, "Prime Laser", "Skeletron_Prime", ["PrimeLaser"], True),
+    (499, "Plantera", "Plantera", ["Plantera"], True),
+    (500, "Plantera's Tentacle", "Plantera", ["PlanterasTentacle"], True),
+    (501, "Plantera's Hook", "Plantera", ["PlanterasHook"], True),
+    (502, "Spore", "Plantera", ["Spore"], True),
+    (503, "Empress of Light", "Empress_of_Light", ["HallowBoss"], True),
+    (504, "Golem", "Golem", ["Golem"], True),
+    (505, "Golem Fist", "Golem", ["GolemFistLeft", "GolemFistRight"], True),
+    (506, "Golem Head", "Golem", ["GolemHead", "GolemHeadFree"], True),
+    (507, "Duke Fishron", "Duke_Fishron", ["DukeFishron"], True),
+    (508, "Sharkron", "Duke_Fishron", ["Sharkron", "Sharkron2"], True),
+    (509, "Sharknado", "Duke_Fishron", ["Sharknado"], True),
+    (510, "Lunatic Cultist", "Lunatic_Cultist", ["CultistBoss"], True),
+    (511, "Ancient Doom", "Ancient_Doom", ["CultistBossClone"], True),
+    (512, "Phantasm Dragon", "Phantasm_Dragon", ["CultistDragonHead"], True),
+    (513, "Ancient Vision", "Ancient_Vision", ["AncientCultistSquidhead"], True),
     # ── Lunar Event ──
-    (514, "Solar Pillar", "Solar_Pillar", ["LunarTowerSolar"]),
-    (515, "Crawltipede", "Crawltipede", ["SolarCrawltipedeHead"]),
-    (516, "Drakomire", "Drakomire", ["SolarDrakomire"]),
-    (517, "Drakomire Rider", "Drakomire_Rider", ["SolarDrakomireRider"]),
-    (518, "Selenian", "Selenian", ["SolarSolenian"]),
-    (519, "Corite", "Corite", ["SolarCorite"]),
-    (520, "Sroller", "Sroller", ["SolarSroller"]),
-    (521, "Nebula Pillar", "Nebula_Pillar", ["LunarTowerNebula"]),
-    (522, "Nebula Floater", "Nebula_Floater", ["NebulaSoldier"]),
-    (523, "Brain Suckler", "Brain_Suckler", ["NebulaBrain"]),
-    (524, "Predictor", "Predictor", ["NebulaHeadcrab"]),
-    (525, "Evolution Beast", "Evolution_Beast", ["NebulaBeast"]),
-    (526, "Stardust Pillar", "Stardust_Pillar", ["LunarTowerStardust"]),
-    (527, "Milkyway Weaver", "Milkyway_Weaver", ["StardustWormHead"]),
-    (528, "Star Cell", "Star_Cell", ["StardustCellBig"]),
-    (529, "Flow Invader", "Flow_Invader", ["StardustJellyfishBig"]),
-    (530, "Twinkle Popper", "Twinkle_Popper", ["StardustSpiderBig"]),
-    (531, "Twinkle", "Twinkle", ["StardustSpiderSmall"]),
-    (532, "Vortex Pillar", "Vortex_Pillar", ["LunarTowerVortex"]),
-    (533, "Storm Diver", "Storm_Diver", ["VortexSoldier"]),
-    (534, "Alien Hornet", "Alien_Hornet", ["VortexHornet", "VortexHornetQueen"]),
-    (535, "Alien Queen", "Alien_Queen", ["VortexHornetQueen"]),
-    (536, "Alien Larva", "Alien_Larva", ["VortexLarva"]),
+    (514, "Solar Pillar", "Solar_Pillar", ["LunarTowerSolar"], True),
+    (515, "Crawltipede", "Crawltipede", ["SolarCrawltipedeHead"], True),
+    (516, "Drakomire", "Drakomire", ["SolarDrakomire"], True),
+    (517, "Drakomire Rider", "Drakomire_Rider", ["SolarDrakomireRider"], True),
+    (518, "Selenian", "Selenian", ["SolarSolenian"], True),
+    (519, "Corite", "Corite", ["SolarCorite"], True),
+    (520, "Sroller", "Sroller", ["SolarSroller"], True),
+    (521, "Nebula Pillar", "Nebula_Pillar", ["LunarTowerNebula"], True),
+    (522, "Nebula Floater", "Nebula_Floater", ["NebulaSoldier"], True),
+    (523, "Brain Suckler", "Brain_Suckler", ["NebulaBrain"], True),
+    (524, "Predictor", "Predictor", ["NebulaHeadcrab"], True),
+    (525, "Evolution Beast", "Evolution_Beast", ["NebulaBeast"], True),
+    (526, "Stardust Pillar", "Stardust_Pillar", ["LunarTowerStardust"], True),
+    (527, "Milkyway Weaver", "Milkyway_Weaver", ["StardustWormHead"], True),
+    (528, "Star Cell", "Star_Cell", ["StardustCellBig"], True),
+    (529, "Flow Invader", "Flow_Invader", ["StardustJellyfishBig"], True),
+    (530, "Twinkle Popper", "Twinkle_Popper", ["StardustSpiderBig"], True),
+    (531, "Twinkle", "Twinkle", ["StardustSpiderSmall"], True),
+    (532, "Vortex Pillar", "Vortex_Pillar", ["LunarTowerVortex"], True),
+    (533, "Storm Diver", "Storm_Diver", ["VortexSoldier"], True),
+    (534, "Alien Hornet", "Alien_Hornet", ["VortexHornet", "VortexHornetQueen"], True),
+    (535, "Alien Queen", "Alien_Queen", ["VortexHornetQueen"], True),
+    (536, "Alien Larva", "Alien_Larva", ["VortexLarva"], True),
     # ── Moon Lord ──
-    (537, "Moon Lord", "Moon_Lord", ["MoonLordHead", "MoonLordHand", "MoonLordCore"]),
-    (538, "Moon Lord's Hand", "Moon_Lord", ["MoonLordHand"]),
-    (539, "Moon Lord's Head", "Moon_Lord", ["MoonLordHead"]),
-    (540, "True Eye of Cthulhu", "Moon_Lord", ["MoonLordFreeEye"]),
-    (541, "Moon Lord Core", "Moon_Lord", ["MoonLordCore"]),
+    (537, "Moon Lord", "Moon_Lord", ["MoonLordHead", "MoonLordHand", "MoonLordCore"], True),
+    (538, "Moon Lord's Hand", "Moon_Lord", ["MoonLordHand"], True),
+    (539, "Moon Lord's Head", "Moon_Lord", ["MoonLordHead"], True),
+    (540, "True Eye of Cthulhu", "Moon_Lord", ["MoonLordFreeEye"], True),
+    (541, "Moon Lord Core", "Moon_Lord", ["MoonLordCore"], True),
     # ── Special / Late additions ──
-    (542, "Torch God", "Torch_God", ["TorchGod"]),
-    (543, "Zombie (Armed)", "Zombie", ["ArmedZombie", "ArmedZombiePincushion", "ArmedZombieTwiggy", "ArmedZombieSwamp", "ArmedZombieCenx"]),
-    (544, "Zombie (Eskimo)", "Zombie", ["ArmedZombieEskimo", "ZombieEskimo"]),
-    (545, "Blood Nautilus", "Dreadnautilus", ["BloodNautilus"]),
-    (546, "Vile Spit", "Eater_of_Worlds", ["VileSpit"]),
+    (542, "Torch God", "Torch_God", ["TorchGod"], False),
+    (543, "Zombie (Armed)", "Zombie", ["ArmedZombie", "ArmedZombiePincushion", "ArmedZombieTwiggy", "ArmedZombieSwamp", "ArmedZombieCenx"], False),
+    (544, "Zombie (Eskimo)", "Zombie", ["ArmedZombieEskimo", "ZombieEskimo"], False),
+    (545, "Blood Nautilus", "Dreadnautilus", ["BloodNautilus"], True),
+    (546, "Vile Spit", "Eater_of_Worlds", ["VileSpit"], False),
 ]
 
 
@@ -723,7 +750,7 @@ def build_bestiary_json(worlds):
     """Build JSON data for the web frontend."""
     # Build internal name -> entry number mapping
     internal_to_entry = {}
-    for num, display, wiki, internals in BESTIARY:
+    for num, display, wiki, internals, hardmode in BESTIARY:
         for iname in internals:
             if iname not in internal_to_entry:
                 internal_to_entry[iname] = num
@@ -749,303 +776,20 @@ def build_bestiary_json(worlds):
 
     # Build entry list
     entries = []
-    for num, display, wiki, internals in BESTIARY:
+    for num, display, wiki, internals, hardmode in BESTIARY:
         entries.append({
             "num": num,
             "name": display,
             "wiki": f"https://terraria.wiki.gg/wiki/{wiki}",
+            "hm": hardmode,
         })
 
     return {"worlds": world_data, "entries": entries, "total": len(BESTIARY)}
 
+with open("assets/main_page.html") as file:
+    HTML_TEMPLATE = file.read();
 
-HTML_TEMPLATE = r"""<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Terraria Bestiary Tracker</title>
-<style>
-  :root {
-    --bg: #1a1a2e;
-    --surface: #16213e;
-    --surface2: #0f3460;
-    --accent: #e94560;
-    --accent2: #533483;
-    --text: #eee;
-    --text-dim: #aaa;
-    --found: #2d6a4f;
-    --missing: #6a2d2d;
-    --link: #7ec8e3;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-  }
-  header {
-    background: var(--surface);
-    border-bottom: 3px solid var(--accent);
-    padding: 1rem 2rem;
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    flex-wrap: wrap;
-  }
-  header h1 {
-    font-size: 1.5rem;
-    color: var(--accent);
-    white-space: nowrap;
-  }
-  .controls {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-    flex-wrap: wrap;
-    flex: 1;
-  }
-  select, input[type="text"] {
-    background: var(--surface2);
-    color: var(--text);
-    border: 1px solid var(--accent2);
-    padding: 0.5rem 0.75rem;
-    border-radius: 6px;
-    font-size: 0.95rem;
-    outline: none;
-  }
-  select:focus, input:focus { border-color: var(--accent); }
-  select { min-width: 220px; }
-  input[type="text"] { min-width: 200px; }
-  .filter-btns { display: flex; gap: 0.5rem; }
-  .filter-btns button {
-    background: var(--surface2);
-    color: var(--text);
-    border: 1px solid var(--accent2);
-    padding: 0.4rem 0.8rem;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.85rem;
-    transition: all 0.15s;
-  }
-  .filter-btns button:hover { border-color: var(--accent); }
-  .filter-btns button.active {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: white;
-  }
-  .stats {
-    background: var(--surface);
-    padding: 0.75rem 2rem;
-    display: flex;
-    gap: 2rem;
-    font-size: 0.95rem;
-    border-bottom: 1px solid var(--accent2);
-  }
-  .stats .stat { display: flex; gap: 0.4rem; align-items: center; }
-  .stats .stat-val { color: var(--accent); font-weight: 700; font-size: 1.1rem; }
-  .progress-bar {
-    flex: 1;
-    max-width: 300px;
-    height: 20px;
-    background: var(--surface2);
-    border-radius: 10px;
-    overflow: hidden;
-    position: relative;
-  }
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--accent2), var(--accent));
-    border-radius: 10px;
-    transition: width 0.4s ease;
-  }
-  .progress-text {
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.75rem;
-    font-weight: 700;
-  }
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 0.5rem;
-    padding: 1rem 2rem 2rem;
-  }
-  .entry {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.6rem 0.8rem;
-    border-radius: 8px;
-    border: 1px solid transparent;
-    transition: all 0.15s;
-  }
-  .entry:hover { border-color: var(--accent2); }
-  .entry.found {
-    background: var(--found);
-    opacity: 0.7;
-  }
-  .entry.missing {
-    background: var(--missing);
-  }
-  .entry-num {
-    color: var(--text-dim);
-    font-size: 0.8rem;
-    min-width: 28px;
-    text-align: right;
-  }
-  .entry-name { flex: 1; }
-  .entry-name a {
-    color: var(--link);
-    text-decoration: none;
-    font-size: 0.95rem;
-  }
-  .entry-name a:hover { text-decoration: underline; color: white; }
-  .entry-status {
-    font-size: 0.75rem;
-    padding: 0.15rem 0.5rem;
-    border-radius: 4px;
-    font-weight: 600;
-  }
-  .entry.found .entry-status { color: #a3d9a5; }
-  .entry.missing .entry-status { color: #f5a5a5; }
-  .no-world {
-    text-align: center;
-    padding: 4rem 2rem;
-    color: var(--text-dim);
-    font-size: 1.1rem;
-  }
-  @media (max-width: 600px) {
-    header { padding: 0.75rem 1rem; }
-    .grid { padding: 0.75rem 1rem; grid-template-columns: 1fr; }
-    .stats { padding: 0.5rem 1rem; flex-wrap: wrap; }
-  }
-</style>
-</head>
-<body>
-
-<header>
-  <h1>Terraria Bestiary Tracker</h1>
-  <div class="controls">
-    <select id="worldSelect">
-      <option value="">-- Select a World --</option>
-    </select>
-    <input type="text" id="search" placeholder="Search entries...">
-    <div class="filter-btns">
-      <button id="btnAll" class="active" onclick="setFilter('all')">All</button>
-      <button id="btnMissing" onclick="setFilter('missing')">Missing</button>
-      <button id="btnFound" onclick="setFilter('found')">Found</button>
-    </div>
-  </div>
-</header>
-
-<div class="stats" id="statsBar" style="display:none">
-  <div class="stat">Found: <span class="stat-val" id="statFound">0</span></div>
-  <div class="stat">Missing: <span class="stat-val" id="statMissing">0</span></div>
-  <div class="progress-bar">
-    <div class="progress-fill" id="progressFill" style="width:0%"></div>
-    <div class="progress-text" id="progressText">0%</div>
-  </div>
-</div>
-
-<div id="content">
-  <div class="no-world">Select a world above to see your bestiary progress.</div>
-</div>
-
-<script>
-const DATA = __DATA_PLACEHOLDER__;
-
-const worldSelect = document.getElementById('worldSelect');
-const searchInput = document.getElementById('search');
-const content = document.getElementById('content');
-const statsBar = document.getElementById('statsBar');
-
-let currentFilter = 'all';
-let currentWorld = null;
-
-// Populate world selector
-Object.keys(DATA.worlds).forEach(fname => {
-  const w = DATA.worlds[fname];
-  const opt = document.createElement('option');
-  opt.value = fname;
-  opt.textContent = w.name + ' [' + w.source + '] (' + w.encountered.length + '/' + DATA.total + ')';
-  worldSelect.appendChild(opt);
-});
-
-worldSelect.addEventListener('change', () => {
-  currentWorld = worldSelect.value ? DATA.worlds[worldSelect.value] : null;
-  render();
-});
-
-searchInput.addEventListener('input', () => render());
-
-function setFilter(f) {
-  currentFilter = f;
-  document.querySelectorAll('.filter-btns button').forEach(b => b.classList.remove('active'));
-  document.getElementById('btn' + f.charAt(0).toUpperCase() + f.slice(1)).classList.add('active');
-  render();
-}
-
-function render() {
-  if (!currentWorld) {
-    content.innerHTML = '<div class="no-world">Select a world above to see your bestiary progress.</div>';
-    statsBar.style.display = 'none';
-    return;
-  }
-
-  const encountered = new Set(currentWorld.encountered);
-  const search = searchInput.value.toLowerCase();
-  const foundCount = encountered.size;
-  const missingCount = DATA.total - foundCount;
-  const pct = ((foundCount / DATA.total) * 100).toFixed(1);
-
-  document.getElementById('statFound').textContent = foundCount;
-  document.getElementById('statMissing').textContent = missingCount;
-  document.getElementById('progressFill').style.width = pct + '%';
-  document.getElementById('progressText').textContent = pct + '%';
-  statsBar.style.display = 'flex';
-
-  let html = '<div class="grid">';
-  let visibleCount = 0;
-
-  DATA.entries.forEach(entry => {
-    const isFound = encountered.has(entry.num);
-    if (currentFilter === 'missing' && isFound) return;
-    if (currentFilter === 'found' && !isFound) return;
-    if (search && !entry.name.toLowerCase().includes(search) && !String(entry.num).includes(search)) return;
-
-    visibleCount++;
-    const cls = isFound ? 'found' : 'missing';
-    const status = isFound ? 'FOUND' : 'MISSING';
-    html += '<div class="entry ' + cls + '">' +
-      '<span class="entry-num">#' + entry.num + '</span>' +
-      '<span class="entry-name"><a href="' + entry.wiki + '" target="_blank" rel="noopener">' +
-      escapeHtml(entry.name) + '</a></span>' +
-      '<span class="entry-status">' + status + '</span>' +
-      '</div>';
-  });
-
-  if (visibleCount === 0) {
-    html += '<div class="no-world">No entries match your filter.</div>';
-  }
-
-  html += '</div>';
-  content.innerHTML = html;
-}
-
-function escapeHtml(s) {
-  const d = document.createElement('div');
-  d.textContent = s;
-  return d.innerHTML;
-}
-</script>
-</body>
-</html>"""
-
+REPO_DIR = os.path.dirname(os.path.abspath(__file__))
 
 class BestiaryHandler(http.server.BaseHTTPRequestHandler):
     def __init__(self, data_json, *args, **kwargs):
@@ -1059,6 +803,26 @@ class BestiaryHandler(http.server.BaseHTTPRequestHandler):
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.end_headers()
             self.wfile.write(page.encode("utf-8"))
+        elif self.path.startswith("/assets/"):
+            # Serve files from the repo's assets/ folder
+            rel = self.path.lstrip("/")  # e.g. "assets/background.jpg"
+            asset_path = os.path.join(REPO_DIR, rel)
+            if os.path.isfile(asset_path):
+                ext = os.path.splitext(asset_path)[1].lower()
+                mime = {".jpg": "image/jpeg", ".jpeg": "image/jpeg",
+                        ".png": "image/png", ".gif": "image/gif",
+                        ".webp": "image/webp"}.get(ext, "application/octet-stream")
+                with open(asset_path, "rb") as f:
+                    data = f.read()
+                self.send_response(200)
+                self.send_header("Content-Type", mime)
+                self.send_header("Content-Length", str(len(data)))
+                self.send_header("Cache-Control", "max-age=3600")
+                self.end_headers()
+                self.wfile.write(data)
+            else:
+                self.send_response(404)
+                self.end_headers()
         else:
             self.send_response(404)
             self.end_headers()

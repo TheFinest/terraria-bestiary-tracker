@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Terraria Bestiary Tracker</title>
+<style>
+  :root {
+    /* Terraria forest green palette */
+    --bg:         #1c2b1c;
+    --surface:    #243324;
+    --surface2:   #2e422e;
+    --surface3:   #3a5438;
+    --accent:     #7ec86a;
+    --accent2:    #4e8c40;
+    --accent-dim: #3a6630;
+    --text:       #e8f0d8;
+    --text-dim:   #9ab88a;
+    --text-muted: #6a8a5a;
+    --found-bg:   #1e3d1a;
+    --found-border: #3a6630;
+    --missing-bg: #2e1a1a;
+    --missing-border: #6b3030;
+    --hm-color:   #c8a040;
+    --pre-color:  #6aaa88;
+    --link:       #a8dc88;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* Blurred background image via a fixed pseudo-element so the blur
+     doesn't affect page content. scale(1.08) hides the blur-edge bleed. */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background-image: url('/assets/background.jpg');
+    background-size: cover;
+    background-position: center;
+    filter: blur(6px) brightness(0.5);
+    transform: scale(1.08);
+  }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);        /* fallback if image fails */
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  header {
+    background: rgba(28, 43, 28, 0.82);
+    backdrop-filter: blur(4px);
+    border-bottom: 3px solid var(--accent2);
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.6);
+  }
+  header h1 {
+    font-size: 1.4rem;
+    color: var(--accent);
+    white-space: nowrap;
+    text-shadow: 0 0 12px rgba(126,200,106,0.35);
+    letter-spacing: 0.03em;
+  }
+  .controls {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
+    flex: 1;
+  }
+  .title {
+	display: flex;
+	align-items: flex-end;
+	column-gap: 10px;
+	position: relative;
+	top: -6px;
+  }
+
+  /* ── Form controls ── */
+  select, input[type="text"] {
+    background: var(--surface2);
+    color: var(--text);
+    border: 1px solid var(--accent-dim);
+    padding: 0.45rem 0.7rem;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  select:focus, input:focus { border-color: var(--accent); }
+  select { min-width: 220px; }
+  input[type="text"] { min-width: 190px; }
+
+  /* ── Filter buttons ── */
+  .filter-btns { display: flex; gap: 0.4rem; }
+  .filter-btns button {
+    background: var(--surface2);
+    color: var(--text-dim);
+    border: 1px solid var(--accent-dim);
+    padding: 0.4rem 0.75rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    transition: all 0.15s;
+  }
+  .filter-btns button:hover { border-color: var(--accent); color: var(--text); }
+  .filter-btns button.active {
+    background: var(--accent2);
+    border-color: var(--accent);
+    color: var(--text);
+  }
+
+  /* ── Legend ── */
+  .legend {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    margin-left: auto;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.78rem;
+    color: var(--text-dim);
+  }
+  .badge-legend {
+    padding: 0.1rem 0.45rem;
+    border-radius: 3px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+  .badge-legend.pre { background: rgba(106,170,136,0.2); color: var(--pre-color); border: 1px solid rgba(106,170,136,0.4); }
+  .badge-legend.hm  { background: rgba(200,160,64,0.2);  color: var(--hm-color);  border: 1px solid rgba(200,160,64,0.4); }
+
+  /* ── Stats bar ── */
+  .stats {
+    background: rgba(28, 43, 28, 0.78);
+    backdrop-filter: blur(4px);
+    padding: 0.6rem 2rem;
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    font-size: 0.9rem;
+    border-bottom: 1px solid var(--surface3);
+  }
+  .stats .stat { display: flex; gap: 0.4rem; align-items: center; }
+  .stats .stat-label { color: var(--text-muted); }
+  .stats .stat-val { color: var(--accent); font-weight: 700; font-size: 1.05rem; }
+  .progress-bar {
+    flex: 1;
+    max-width: 280px;
+    height: 18px;
+    background: var(--surface3);
+    border-radius: 9px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid var(--accent-dim);
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+    border-radius: 9px;
+    transition: width 0.4s ease;
+  }
+  .progress-text {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--text);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+  }
+
+  /* ── Entry grid ── */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 0.4rem;
+    padding: 1rem 2rem 2rem;
+  }
+  .entry {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    transition: border-color 0.12s, opacity 0.12s;
+  }
+  .entry:hover { border-color: var(--accent2) !important; }
+  .entry.found {
+    background: var(--found-bg);
+    border-color: var(--found-border);
+    opacity: 0.72;
+  }
+  .entry.found:hover { opacity: 1; }
+  .entry.missing {
+    background: var(--missing-bg);
+    border-color: var(--missing-border);
+  }
+
+  /* ── Entry pieces ── */
+  .entry-num {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    min-width: 30px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .entry-name { flex: 1; min-width: 0; }
+  .entry-name a {
+    color: var(--link);
+    text-decoration: none;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+  }
+  .entry-name a:hover { text-decoration: underline; color: white; }
+
+  /* hardmode / pre-hardmode badge */
+  .hm-badge {
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+    font-size: 0.67rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  .hm-badge.pre {
+    background: rgba(106,170,136,0.15);
+    color: var(--pre-color);
+    border: 1px solid rgba(106,170,136,0.3);
+  }
+  .hm-badge.hm {
+    background: rgba(200,160,64,0.15);
+    color: var(--hm-color);
+    border: 1px solid rgba(200,160,64,0.3);
+  }
+
+  /* found/missing status text */
+  .entry-status {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    flex-shrink: 0;
+    min-width: 52px;
+    text-align: right;
+  }
+  .entry.found   .entry-status { color: var(--accent); }
+  .entry.missing .entry-status { color: #d07070; }
+
+  /* ── Empty state ── */
+  .no-world {
+    text-align: center;
+    padding: 5rem 2rem;
+    color: var(--text-muted);
+    font-size: 1.05rem;
+  }
+
+  @media (max-width: 640px) {
+    header { padding: 0.75rem 1rem; }
+    .grid  { padding: 0.75rem 0.75rem 2rem; grid-template-columns: 1fr; }
+    .stats { padding: 0.5rem 1rem; flex-wrap: wrap; gap: 0.75rem; }
+    .legend { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="title"><img src="assets/terraria.png" alt="Terraria"> <h1>Bestiary Tracker</h1></div>
+  <div class="controls">
+    <select id="worldSelect">
+      <option value="">--- Select a World ---</option>
+    </select>
+    <input type="text" id="search" placeholder="Search entries...">
+    <div class="filter-btns">
+      <button id="btnAll" class="active" onclick="setFilter('all')">All</button>
+      <button id="btnMissing" onclick="setFilter('missing')">Missing</button>
+      <button id="btnFound" onclick="setFilter('found')">Found</button>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><span class="badge-legend pre">PRE-HM</span> Pre-Hardmode</div>
+      <div class="legend-item"><span class="badge-legend hm">HM</span> Hardmode</div>
+    </div>
+  </div>
+</header>
+
+<div class="stats" id="statsBar" style="display:none">
+  <div class="stat"><span class="stat-label">Found:</span> <span class="stat-val" id="statFound">0</span></div>
+  <div class="stat"><span class="stat-label">Missing:</span> <span class="stat-val" id="statMissing">0</span></div>
+  <div class="progress-bar">
+    <div class="progress-fill" id="progressFill" style="width:0%"></div>
+    <div class="progress-text" id="progressText">0%</div>
+  </div>
+</div>
+
+<div id="content">
+  <div class="no-world">Select a world above to see your bestiary progress.</div>
+</div>
+
+<script>
+const DATA = __DATA_PLACEHOLDER__;
+
+const worldSelect = document.getElementById('worldSelect');
+const searchInput  = document.getElementById('search');
+const content      = document.getElementById('content');
+const statsBar     = document.getElementById('statsBar');
+
+let currentFilter = 'all';
+let currentWorld  = null;
+
+// Populate world selector, sorted by most progress first
+const worldKeys = Object.keys(DATA.worlds).sort((a, b) =>
+  DATA.worlds[b].encountered.length - DATA.worlds[a].encountered.length
+);
+worldKeys.forEach(fname => {
+  const w = DATA.worlds[fname];
+  const opt = document.createElement('option');
+  opt.value = fname;
+  opt.textContent = w.name + ' [' + w.source + ']  (' + w.encountered.length + '/' + DATA.total + ')';
+  worldSelect.appendChild(opt);
+});
+
+worldSelect.addEventListener('change', () => {
+  currentWorld = worldSelect.value ? DATA.worlds[worldSelect.value] : null;
+  render();
+});
+searchInput.addEventListener('input', render);
+
+function setFilter(f) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btns button').forEach(b => b.classList.remove('active'));
+  document.getElementById('btn' + f[0].toUpperCase() + f.slice(1)).classList.add('active');
+  render();
+}
+
+function render() {
+  if (!currentWorld) {
+    content.innerHTML = '<div class="no-world">Select a world above to see your bestiary progress.</div>';
+    statsBar.style.display = 'none';
+    return;
+  }
+
+  const encountered  = new Set(currentWorld.encountered);
+  const search       = searchInput.value.toLowerCase().trim();
+  const foundCount   = encountered.size;
+  const missingCount = DATA.total - foundCount;
+  const pct          = ((foundCount / DATA.total) * 100).toFixed(1);
+
+  document.getElementById('statFound').textContent   = foundCount;
+  document.getElementById('statMissing').textContent = missingCount;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent = pct + '%';
+  statsBar.style.display = 'flex';
+
+  let html = '<div class="grid">';
+  let visible = 0;
+
+  DATA.entries.forEach(entry => {
+    const isFound = encountered.has(entry.num);
+    if (currentFilter === 'missing' && isFound)  return;
+    if (currentFilter === 'found'   && !isFound) return;
+    if (search && !entry.name.toLowerCase().includes(search) && !String(entry.num).includes(search)) return;
+
+    visible++;
+    const cls    = isFound ? 'found' : 'missing';
+    const status = isFound ? 'FOUND' : 'MISSING';
+    const hmCls  = entry.hm ? 'hm' : 'pre';
+    const hmText = entry.hm ? 'HM' : 'PRE-HM';
+
+    html +=
+      '<div class="entry ' + cls + '">' +
+        '<span class="entry-num">#' + entry.num + '</span>' +
+        '<span class="entry-name"><a href="' + entry.wiki + '" target="_blank" rel="noopener">' +
+          escapeHtml(entry.name) +
+        '</a></span>' +
+        '<span class="hm-badge ' + hmCls + '">' + hmText + '</span>' +
+        '<span class="entry-status">' + status + '</span>' +
+      '</div>';
+  });
+
+  if (visible === 0) {
+    html += '<div class="no-world">No entries match your filter.</div>';
+  }
+
+  content.innerHTML = html + '</div>';
+}
+
+function escapeHtml(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+</script>
+</body>
+</html>
