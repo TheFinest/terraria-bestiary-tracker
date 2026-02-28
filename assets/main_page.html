@@ -427,7 +427,7 @@ function render() {
     const hmText = entry.hm ? 'HM' : 'PRE-HM';
 
     html +=
-      '<div class="entry ' + cls + '">' +
+      '<div class="entry ' + cls + '" title="' + escapeHtml(entry.name) + '">' +
         '<img class="entry-sprite" src="assets/creatures/' + entry.num + '.png" alt=""' +
           ' onerror="this.classList.add(\'missing-img\')">' +
         '<span class="entry-num">#' + entry.num + '</span>' +
