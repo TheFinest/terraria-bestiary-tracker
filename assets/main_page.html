@@ -553,10 +553,29 @@ document.getElementById('upload-input').addEventListener('change', async e => {
 
   const allInternal = [...Object.keys(result.kills), ...result.sights, ...result.chats];
   const encounterSet = new Set();
+  const unmatched = [];
   for (const iname of allInternal) {
-    const num = DATA.internalToEntry[iname];
-    if (num !== undefined) encounterSet.add(num);
+    const nums = DATA.internalToEntry[iname];
+    if (nums !== undefined) {
+      for (const num of nums) encounterSet.add(num);
+    } else {
+      unmatched.push(iname);
+    }
   }
+  if (unmatched.length) {
+    console.log('[Bestiary Tracker] NPC keys in world file with no matching entry:', unmatched);
+  }
+
+  // Exclusive trio: Salamander (195), Crawdad (198), Giant Shelly (211).
+  // Only 2 of the 3 spawn in any given world; seeing both unlocks the missing one.
+  const EXCLUSIVE_TRIO = [195, 198, 211];
+  if (EXCLUSIVE_TRIO.filter(n => encounterSet.has(n)).length >= 2) {
+    EXCLUSIVE_TRIO.forEach(n => encounterSet.add(n));
+  }
+
+  console.log('[Bestiary Tracker] Matched', encounterSet.size, '/', DATA.total, 'entries.',
+    result.name, '— kills:', Object.keys(result.kills).length,
+    'sights:', result.sights.length, 'chats:', result.chats.length);
 
   const key = 'Uploaded|' + result.name;
   DATA.worlds[key] = {
