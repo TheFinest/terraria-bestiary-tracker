@@ -112,7 +112,7 @@ BESTIARY = [
     (44, "Explosive Bunny", "Explosive_Bunny", ["ExplosiveBunny"], False),
     (45, "Bunny (Slime)", "Bunny", ["BunnySlimed"], False),
     (46, "Bunny (Xmas)", "Bunny", ["BunnyXmas"], False),
-    (47, "Gold Bunny", "Gold_Bunny", ["GoldBunny", "GoldBird", "GoldGoldfish", "SquirrelGold", "GoldMouse", "GoldFrog", "GoldGrasshopper", "GoldButterfly", "GoldWorm", "GoldDragonfly", "GoldSeahorse", "GoldWaterStrider", "GoldLadybug"], False),
+    (47, "Gold Bunny", "Gold_Bunny", ["GoldBunny"], False),
     (48, "Bird", "Bird", ["Bird"], False),
     (49, "Blue Jay", "Blue_Jay", ["BirdBlue"], False),
     (50, "Cardinal", "Cardinal", ["BirdRed"], False),
@@ -121,24 +121,24 @@ BESTIARY = [
     (53, "Toucan", "Toucan", ["Toucan"], False),
     (54, "Yellow Cockatiel", "Yellow_Cockatiel", ["YellowCockatiel"], False),
     (55, "Gray Cockatiel", "Gray_Cockatiel", ["GrayCockatiel"], False),
-    (56, "Gold Bird", "Gold_Bird", ["GoldBunny", "GoldBird", "GoldGoldfish", "SquirrelGold", "GoldMouse", "GoldFrog", "GoldGrasshopper", "GoldButterfly", "GoldWorm", "GoldDragonfly", "GoldSeahorse", "GoldWaterStrider", "GoldLadybug"], False),
+    (56, "Gold Bird", "Gold_Bird", ["GoldBird"], False),
     (57, "Goldfish", "Goldfish", ["Goldfish"], False),
-    (58, "Gold Goldfish", "Gold_Goldfish", ["GoldBunny", "GoldBird", "GoldGoldfish", "SquirrelGold", "GoldMouse", "GoldFrog", "GoldGrasshopper", "GoldButterfly", "GoldWorm", "GoldDragonfly", "GoldSeahorse", "GoldWaterStrider", "GoldLadybug"], False),
+    (58, "Gold Goldfish", "Gold_Goldfish", ["GoldGoldfish"], False),
     (59, "Squirrel", "Squirrel", ["Squirrel"], False),
     (60, "Red Squirrel", "Red_Squirrel", ["SquirrelRed"], False),
-    (61, "Gold Squirrel", "Gold_Squirrel", ["GoldBunny", "GoldBird", "GoldGoldfish", "SquirrelGold", "GoldMouse", "GoldFrog", "GoldGrasshopper", "GoldButterfly", "GoldWorm", "GoldDragonfly", "GoldSeahorse", "GoldWaterStrider", "GoldLadybug"], False),
+    (61, "Gold Squirrel", "Gold_Squirrel", ["SquirrelGold"], False),
     (62, "Mouse", "Mouse", ["Mouse"], False),
-    (63, "Gold Mouse", "Gold_Mouse", ["GoldBunny", "GoldBird", "GoldGoldfish", "SquirrelGold", "GoldMouse", "GoldFrog", "GoldGrasshopper", "GoldButterfly", "GoldWorm", "GoldDragonfly", "GoldSeahorse", "GoldWaterStrider", "GoldLadybug"], False),
+    (63, "Gold Mouse", "Gold_Mouse", ["GoldMouse"], False),
     (64, "Frog", "Frog", ["Frog"], False),
-    (65, "Gold Frog", "Gold_Frog", ["GoldBunny", "GoldBird", "GoldGoldfish", "SquirrelGold", "GoldMouse", "GoldFrog", "GoldGrasshopper", "GoldButterfly", "GoldWorm", "GoldDragonfly", "GoldSeahorse", "GoldWaterStrider", "GoldLadybug"], False),
+    (65, "Gold Frog", "Gold_Frog", ["GoldFrog"], False),
     (66, "Grasshopper", "Grasshopper", ["Grasshopper"], False),
-    (67, "Gold Grasshopper", "Gold_Grasshopper", ["GoldBunny", "GoldBird", "GoldGoldfish", "SquirrelGold", "GoldMouse", "GoldFrog", "GoldGrasshopper", "GoldButterfly", "GoldWorm", "GoldDragonfly", "GoldSeahorse", "GoldWaterStrider", "GoldLadybug"], False),
+    (67, "Gold Grasshopper", "Gold_Grasshopper", ["GoldGrasshopper"], False),
     (68, "Butterfly", "Butterfly", ["Butterfly"], False),
-    (69, "Gold Butterfly", "Gold_Butterfly", ["GoldBunny", "GoldBird", "GoldGoldfish", "SquirrelGold", "GoldMouse", "GoldFrog", "GoldGrasshopper", "GoldButterfly", "GoldWorm", "GoldDragonfly", "GoldSeahorse", "GoldWaterStrider", "GoldLadybug"], False),
+    (69, "Gold Butterfly", "Gold_Butterfly", ["GoldButterfly"], False),
     (70, "Worm", "Worm", ["Worm"], False),
-    (71, "Gold Worm", "Gold_Worm", ["GoldBunny", "GoldBird", "GoldGoldfish", "SquirrelGold", "GoldMouse", "GoldFrog", "GoldGrasshopper", "GoldButterfly", "GoldWorm", "GoldDragonfly", "GoldSeahorse", "GoldWaterStrider", "GoldLadybug"], False),
+    (71, "Gold Worm", "Gold_Worm", ["GoldWorm"], False),
     (72, "Dragonfly", "Dragonfly", ["Dragonfly", "BlackDragonfly", "BlueDragonfly", "GreenDragonfly", "OrangeDragonfly", "RedDragonfly", "YellowDragonfly"], False),
-    (73, "Gold Dragonfly", "Gold_Dragonfly", ["GoldBunny", "GoldBird", "GoldGoldfish", "SquirrelGold", "GoldMouse", "GoldFrog", "GoldGrasshopper", "GoldButterfly", "GoldWorm", "GoldDragonfly", "GoldSeahorse", "GoldWaterStrider", "GoldLadybug"], False),
+    (73, "Gold Dragonfly", "Gold_Dragonfly", ["GoldDragonfly"], False),
     (74, "Seahorse", "Seahorse", ["Seahorse"], False),
     (75, "Gold Seahorse", "Gold_Seahorse", ["GoldSeahorse"], False),
     (76, "Water Strider", "Water_Strider", ["WaterStrider"], False),
@@ -779,6 +779,20 @@ def build_bestiary_json(worlds):
         EXCLUSIVE_TRIO = {195, 198, 211}
         if len(encountered & EXCLUSIVE_TRIO) >= 2:
             encountered |= EXCLUSIVE_TRIO
+
+        # Gold critter rule: seeing any gold critter satisfies the gold condition;
+        # each gold critter entry is then unlocked if its base critter was also seen.
+        # (gold entry, base entry)
+        GOLD_PAIRS = [
+            (47, 42), (56, 48), (58, 57), (61, 59), (63, 62),
+            (65, 64), (67, 66), (69, 68), (71, 70), (73, 72),
+            (75, 74), (77, 76), (79, 78),
+        ]
+        GOLD_ENTRIES = {g for g, _ in GOLD_PAIRS}
+        if encountered & GOLD_ENTRIES:  # any gold critter already directly seen
+            for gold, base in GOLD_PAIRS:
+                if base in encountered:
+                    encountered.add(gold)
 
         world_data[fname] = {
             "name": wdata["name"],

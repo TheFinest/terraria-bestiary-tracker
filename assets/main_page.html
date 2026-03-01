@@ -573,6 +573,19 @@ document.getElementById('upload-input').addEventListener('change', async e => {
     EXCLUSIVE_TRIO.forEach(n => encounterSet.add(n));
   }
 
+  // Gold critter rule: seeing any gold critter + having seen the base critter
+  // unlocks that gold critter entry. Any gold sighting counts for all.
+  const GOLD_PAIRS = [
+    [47, 42], [56, 48], [58, 57], [61, 59], [63, 62],
+    [65, 64], [67, 66], [69, 68], [71, 70], [73, 72],
+    [75, 74], [77, 76], [79, 78],
+  ];
+  if (GOLD_PAIRS.some(([g]) => encounterSet.has(g))) {
+    for (const [gold, base] of GOLD_PAIRS) {
+      if (encounterSet.has(base)) encounterSet.add(gold);
+    }
+  }
+
   console.log('[Bestiary Tracker] Matched', encounterSet.size, '/', DATA.total, 'entries.',
     result.name, '— kills:', Object.keys(result.kills).length,
     'sights:', result.sights.length, 'chats:', result.chats.length);
