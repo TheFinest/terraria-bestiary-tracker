@@ -298,6 +298,51 @@
     color: var(--text-muted);
     font-size: 1.05rem;
   }
+  .no-world p { margin: 0; }
+  .no-world-locations {
+    display: inline-block;
+    margin-top: 2rem;
+    text-align: left;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 1.25rem 1.75rem;
+    max-width: 600px;
+    width: 100%;
+  }
+  .no-world-locations h3 {
+    margin: 0 0 0.85rem;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+  }
+  .no-world-locations ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .no-world-locations li {
+    margin-bottom: 0.6rem;
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+  .no-world-locations li:last-child { margin-bottom: 0; }
+  .no-world-locations .loc-label {
+    display: block;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    margin-bottom: 0.15rem;
+  }
+  .no-world-locations code {
+    background: rgba(0,0,0,0.3);
+    border-radius: 3px;
+    padding: 0.1em 0.4em;
+    font-family: monospace;
+    font-size: 0.85em;
+    color: #c8d8c0;
+    word-break: break-all;
+  }
 
   @media (max-width: 640px) {
     header { padding: 0.75rem 1rem; }
@@ -343,7 +388,34 @@
 </div>
 
 <div id="content">
-  <div class="no-world" id="noWorldMsg">Select or upload a world file to see your bestiary progress.</div>
+  <div class="no-world" id="noWorldMsg">
+    <p>Select or upload a world file to see your bestiary progress.</p>
+    <div class="no-world-locations">
+      <h3>Where to find your world files (.wld)</h3>
+      <ul>
+        <li>
+          <span class="loc-label">Windows - Local save</span>
+          <code>%USERPROFILE%\Documents\My Games\Terraria\Worlds\</code>
+        </li>
+        <li>
+          <span class="loc-label">Windows - Steam Cloud</span>
+          <code>C:\Program Files (x86)\Steam\userdata\&lt;SteamID&gt;\105600\remote\worlds\</code>
+        </li>
+        <li>
+          <span class="loc-label">Windows - tModLoader (Steam Cloud)</span>
+          <code>C:\Program Files (x86)\Steam\userdata\&lt;SteamID&gt;\105600\remote\ModLoader\worlds\</code>
+        </li>
+        <li>
+          <span class="loc-label">macOS</span>
+          <code>~/Library/Application Support/Terraria/Worlds/</code>
+        </li>
+        <li>
+          <span class="loc-label">Linux</span>
+          <code>~/.local/share/Terraria/Worlds/</code>
+        </li>
+      </ul>
+    </div>
+  </div>
 </div>
 
 <script>
